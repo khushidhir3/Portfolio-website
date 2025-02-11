@@ -1,0 +1,236 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap%27");
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+html{
+    font-size: 62.5%;
+}
+body{
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    background-color: #030303;
+    color: hotpink;
+
+}
+header{
+    margin-top: 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 9%;
+    background-color: transparent;
+    filter: drop-shadow(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+
+}
+.logo{
+   
+    font-size: 3rem;
+    color: hotpink;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.5s ease;
+
+}
+.logo:hover{
+    transform: scale(1.1);
+
+}
+nav a{
+    font-size: 1.8rem;
+    color: white;
+    margin-left: 4rem;
+    font-weight: 500;
+    transition: 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+nav a:hover,nav a.active{
+    color: hotpink;
+    border-bottom: 3px solid hotpink;
+}
+@media (max-width: 995px){
+    nav{
+       
+        position: fixed;
+        top: 100%;
+        right: 0;
+        width: 40%;
+        border-left: 3px solid hotpink;
+        border-bottom: 3px solid hotpink;
+        border-bottom-left-radius:3rem ;
+        padding: 1rem solid;
+        background-color: black;
+        border-top: 0.1rem solid black;
+    }
+    nav.active{
+        display: block;
+    }
+    nav a{
+        display: block;
+        margin: 3rem ;
+        font-size: 2rem;
+
+    }
+    nav a:hover,nav a.active{
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-bottom: 0.5rem solid hotpink;
+    }
+}
+section{
+    min-height: 100vh;
+    padding: 5rem 9% 5rem;
+}
+.home{
+    display: flex;
+    justify-content: center;
+    gap:8rem;
+    align-items: center;
+    
+    background-color: black;
+}
+
+.image{
+    border-radius: 50%;
+
+
+}
+.image img{
+    position: relative;
+    width : 32vw;
+    border-radius: 50%;
+    box-shadow: 0 0 25px hotpink;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+.home-img img:hover{
+    transform: scale(1.1);
+    font-size:1.8rem;
+    font-weight: 500;
+    transform:scale(1.03);
+}
+.social-icons a{
+    color: hotpink;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    background-color: transparent;
+    border: 0.2 solid hotpink;
+    font-size:2rem;
+    border-radius: 50%;
+    margin: 3rem 1.5rem 3rem 0;
+    transition: 0.3sec ease;
+}
+span{
+    color: hotpink;
+}
+.home h3{
+    margin-bottom: 1rem;
+    font-size: 5rem;
+    color:white;
+
+}
+.home .content h1{
+    color: white;
+    font-size: 6rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.home .content p{
+    font-size: 2rem;
+    font-weight: 500;
+    margin-top: 2rem;
+    color: white;
+}
+.social-icons a:hover{
+    color:white; 
+    transform:scale(1.3) translateY(-5px);
+    box-shadow: 0 0 25px  hotpink;
+}
+.btn{
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 2rem;
+    font-weight: 500;
+    color: hotpink;
+    background-color: transparent;
+    border: 0.2rem solid hotpink;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    transition: 0.3s ease;
+    box-shadow: 0 0 25px hotpink;}
+    .btn:hover{
+        color: white;
+        background-color: hotpink;
+    transform: scale(1.03);
+}
+.typing{
+    font-size:34px;
+    font-weight: 600;
+    min-width:280px;
+}
+.typing span{
+    position: relative;
+}
+.typing span::before{
+    content:"Aspiring Full Stack Web Developer.";
+    color:hotpink;
+    animation: words 20s infinite;
+}
+typing span::after{
+    content: "";
+    background-color: black;
+    position: absolute;
+    width:calc(100% + 10px);
+    height:100%;
+    border-left: 3px solid black;
+    right:-8;
+    animation: cursor 0.5s infinite;
+    }
+   
+
+@keyframes words{
+    0%,100%{
+        content:"Aspiring Full Stack Web Developer.";
+    }
+    10%,30%{
+        content:"A Passionate Coder.";
+    }
+    40%,60%{
+        content:"A Tech Enthusiast.";
+    }
+    70%,90%{
+        content:"A Quick Learner.";
+    }
+}
+@media(max-width: 1000px){
+    .home{
+        gap:3rem;
+    }
+}
+@media(max-width: 995px){
+    .home{
+        flex-direction: column;
+      margin:5rem 5rem;
+    }
+    
+    .home h3{
+        font-size: 3rem;
+    }
+    .home .content h1{
+        font-size: 5rem;
+    }
+   .home img{
+         width: 50vh;
+   }
+}
