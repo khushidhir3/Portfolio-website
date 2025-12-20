@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import profile from './assets/profile.png';
 import about from './assets/about.png';
 
@@ -101,6 +102,7 @@ const Portfolio = () => {
 
     return (
         <div className="bg-[#A67B7B]">
+            <Analytics />
             {/* Hero Section */}
             <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden">
                 <div className="max-w-[1400px] w-full mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
