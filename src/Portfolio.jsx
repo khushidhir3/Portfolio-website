@@ -638,43 +638,59 @@ const Portfolio = () => {
                     <div className="bg-[#E8DDD3] p-8 md:p-12 rounded-sm shadow-2xl hover-card">
                         <div className="bg-[#E8DDD3] p-8 md:p-12 rounded-sm shadow-2xl max-w-[700px] mx-auto">
                             <form className="space-y-6" onSubmit={handleSubmit}>
-                                <div>
-                                    <label className="block text-[#5C1F1F] font-medium mb-2">
-                                        Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010] transition-all duration-300 hover:border-[#3A1010]"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[#5C1F1F] font-medium mb-2">
-                                        Email
-                                    </label>
-                                    <input
-                                        type="email"
-                                        required
-                                        className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010] transition-all duration-300 hover:border-[#3A1010]"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[#5C1F1F] font-medium mb-2">
-                                        Message
-                                    </label>
-                                    <textarea
-                                        required
-                                        rows="6"
-                                        className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010] resize-none transition-all duration-300 hover:border-[#3A1010]"
-                                    ></textarea>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="w-full bg-[#5C1F1F] text-white px-8 py-4 rounded-sm cursor-pointer hover:bg-[#3A1010] transition-all duration-300 text-lg font-medium hover-lift"
-                                >
-                                    Send Message
-                                </button>
-                            </form>
+  <div>
+    <label className="block text-[#5C1F1F] font-medium mb-2">
+      Name
+    </label>
+    <input
+      type="text"
+      required
+      value={formData.name}
+      onChange={(e) =>
+        setFormData({ ...formData, name: e.target.value })
+      }
+      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010]"
+    />
+  </div>
+
+  <div>
+    <label className="block text-[#5C1F1F] font-medium mb-2">
+      Email
+    </label>
+    <input
+      type="email"
+      required
+      value={formData.email}
+      onChange={(e) =>
+        setFormData({ ...formData, email: e.target.value })
+      }
+      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010]"
+    />
+  </div>
+
+  <div>
+    <label className="block text-[#5C1F1F] font-medium mb-2">
+      Message
+    </label>
+    <textarea
+      required
+      rows="6"
+      value={formData.message}
+      onChange={(e) =>
+        setFormData({ ...formData, message: e.target.value })
+      }
+      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010] resize-none"
+    />
+  </div>
+
+  <button
+    type="submit"
+    className="w-full bg-[#5C1F1F] text-white px-8 py-4 rounded-sm hover:bg-[#3A1010] transition-all duration-300 text-lg font-medium"
+  >
+    Send Message
+  </button>
+</form>
+
                         </div>
 
                         <div className="mt-8 pt-8 border-t-2 border-[#C4A5A0]">
