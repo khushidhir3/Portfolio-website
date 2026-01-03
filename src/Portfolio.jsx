@@ -10,6 +10,10 @@ import CT from './assets/CT.jpg';
 import OOP from './assets/OOP.jpg';
 import DSA from './assets/DSA.jpg';
 import JP from './assets/JP.jpg';
+import Notesheet from './assets/Notesheet.png';
+import Mindhorizon from './assets/Mindhorizon.png';
+import Whiskarts from './assets/Whiskarts.png';
+import Lifestream from './assets/Lifestream.png';
 const Portfolio = () => {
     const [expandedSection, setExpandedSection] = useState(null);
     const [expandedProject, setExpandedProject] = useState(null);
@@ -55,7 +59,7 @@ const Portfolio = () => {
         {
             id: 'notesheet',
             name: 'NOTESHEET TRACKER',
-            image: portfolio,
+            image:  Notesheet,
             subtitle: 'Academic Workflow Automation',
             description:
                 'A structured digital platform that streamlines the submission, review, and approval of academic note sheets, enabling efficient coordination between students and HODs.',
@@ -73,7 +77,7 @@ const Portfolio = () => {
         {
             id: 'mindhorizon',
             name: 'MIND HORIZON',
-            image: portfolio,
+            image: Mindhorizon,
             subtitle: 'Mental Health Awareness Platform',
             description:
                 'An interactive quiz-based web platform designed to identify early indicators of stress, anxiety, and emotional imbalance, offering personalized insights and guidance.',
@@ -91,7 +95,7 @@ const Portfolio = () => {
         {
             id: 'whiskarts',
             name: 'WHISKARTS',
-            image: portfolio,
+            image: Whiskarts,
             subtitle: 'E-commerce Platform',
             description:
                 'A cute modern e-commerce web application built to deliver a smooth shopping experience with product browsing, cart management, and user-friendly navigation.',
@@ -109,7 +113,7 @@ const Portfolio = () => {
         {
             id: 'lifestream',
             name: 'LIFESTREAM',
-            image: portfolio,
+            image: Lifestream,
             subtitle: 'Blood Donation & Health Awareness',
             description:
                 'A purpose-driven platform aimed at connecting blood donors with recipients while promoting health awareness and emergency readiness.',
@@ -206,7 +210,7 @@ const Portfolio = () => {
                         </h1>
                         <div className="space-y-2 md:space-y-4">
                             <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-widest hover-glow">KHUSHI</h2>
-                            <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-widest hover-glow">DHIR 🩷</h2>
+                            <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-widest hover-glow">DHIR </h2>
                         </div>
                         <div className="text-white text-sm md:text-base font-light mt-6 md:mt-12 space-y-1">
                             <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="block text-lg hover:text-[#C4A5A0] transition-all duration-300 hover:translate-x-2">LinkedIn: khushidhir3</a>
