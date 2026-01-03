@@ -11,7 +11,7 @@ import OOP from './assets/OOP.jpg';
 import DSA from './assets/DSA.jpg';
 import JP from './assets/JP.jpg';
 import Notesheet from './assets/Notesheet.png';
-import Mindhorizon from './assets/Mindhorizon.png';
+import Mindhorizon from './assets/MindHorizon.png';
 import Whiskarts from './assets/Whiskarts.png';
 import Lifestream from './assets/Lifestream.png';
 const Portfolio = () => {
