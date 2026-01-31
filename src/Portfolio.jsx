@@ -704,10 +704,6 @@ const Portfolio = () => {
                                     <a href="mailto:dhir.khushi.2005@gmail.com" className="hover:text-[#3A1010] transition-colors duration-300">dhir.khushi.2005@gmail.com</a>
                                 </div>
                                 <div className="hover:translate-x-2 transition-transform duration-300">
-                                    <h4 className="font-bold mb-2">Phone</h4>
-                                    <a href="tel:+916284827233" className="hover:text-[#3A1010] transition-colors duration-300">+91-6284827233</a>
-                                </div>
-                                <div className="hover:translate-x-2 transition-transform duration-300">
                                     <h4 className="font-bold mb-2">LinkedIn</h4>
                                     <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="hover:text-[#3A1010] transition-colors duration-300">linkedin.com/in/khushidhir3</a>
                                 </div>
