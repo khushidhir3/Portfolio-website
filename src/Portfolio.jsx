@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import profile from './assets/profile.png';
-import about from './assets/about.png';
+import profile from './assets/formal.jpeg';
+import about from './assets/formal.jpeg';
 import resumePreview from './assets/resumePreview.png';
 import portfolio from './assets/portfolio.png';
 import MAD from './assets/MAD.jpg'
