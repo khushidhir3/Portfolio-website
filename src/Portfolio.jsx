@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import emailjs from '@emailjs/browser';
 import {
@@ -18,13 +18,11 @@ import {
     ChevronDown,
     ChevronRight,
     Layers,
-    Laptop,
     Star,
     Flame,
     Zap,
     ArrowUpRight,
     ArrowDown,
-    Filter,
     FileText,
     Send,
     Volume2,
@@ -32,8 +30,7 @@ import {
     Eye,
     X,
     FolderGit2,
-    Cpu,
-    Compass
+    Cpu
 } from 'lucide-react';
 
 import DiscoLightsCanvas from './components/DiscoLightsCanvas';
@@ -68,7 +65,6 @@ const Portfolio = () => {
     const [expandedProject, setExpandedProject] = useState('schneiderlink');
     const [projectFilter, setProjectFilter] = useState('all');
     const [selectedCert, setSelectedCert] = useState(null);
-    const [skillSearch, setSkillSearch] = useState('');
     const [activeSkillCategory, setActiveSkillCategory] = useState('all');
     const [copiedEmail, setCopiedEmail] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -193,7 +189,7 @@ const Portfolio = () => {
             features: [
                 'Interactive role-based dashboards (Admin, Client, Technician) with live state synchronization',
                 'Client-side WebSocket listeners (Laravel Echo) for live UI updates and instant push notifications on dispatch alerts',
-                'Real-time job dispatching and intelligent technician matching',
+                'Real-time job dispatching and intelligent technician matching algorithms',
                 'Optimized frontend performance using Vite asset bundling and prefetching for fast load times',
                 'Streamlined workflow coordination and status tracking'
             ],
@@ -395,11 +391,6 @@ const Portfolio = () => {
         return true;
     });
 
-    const filteredSkills = skillCategories.map((cat) => ({
-        ...cat,
-        skills: cat.skills.filter((s) => s.toLowerCase().includes(skillSearch.toLowerCase()))
-    })).filter((cat) => activeSkillCategory === 'all' || cat.id === activeSkillCategory);
-
     return (
         <div className="relative bg-[#5C1F1F] text-[#FAF7F2] min-h-screen selection:bg-[#FFE29A] selection:text-[#3A1010]">
             <Analytics />
@@ -420,22 +411,22 @@ const Portfolio = () => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 px-2.5 py-1 bg-[#3A1010] border border-[#5C1F1F] rounded-none block-shadow-sm">
                             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span className="font-bold tracking-wider text-white">KHUSHI.SYS</span>
+                            <span className="font-bold tracking-wider text-white">KHUSHI.GAZETTE</span>
                             <span className="text-[#C4A5A0] hidden sm:inline">[ONLINE]</span>
                         </div>
                         <span className="hidden md:inline text-[#C4A5A0]/60">
-                            LAT 31.25°N • LON 75.70°E
+                            VOL. XXIV • NO. 105
                         </span>
                     </div>
 
                     {/* Center: Quick Nav Links */}
                     <nav className="hidden lg:flex items-center gap-1">
                         {[
-                            { id: 'hero', label: '01 // OVERVIEW' },
-                            { id: 'about-skills', label: '02 // PROFILE' },
+                            { id: 'hero', label: '01 // DISPATCH' },
+                            { id: 'about-skills', label: '02 // DOSSIER' },
                             { id: 'projects', label: '03 // WORKS' },
                             { id: 'achievements-education', label: '04 // TROPHIES' },
-                            { id: 'certificates-resume', label: '05 // CERTS' },
+                            { id: 'certificates-resume', label: '05 // DIPLOMAS' },
                             { id: 'contact', label: '06 // CONTACT' },
                         ].map((item) => (
                             <a
@@ -455,7 +446,7 @@ const Portfolio = () => {
                         {/* Disco Light Mode Button */}
                         <button
                             onClick={cycleDiscoMode}
-                            title="Toggle Disco Lights fx"
+                            title="Toggle Disco Lights FX"
                             className="flex items-center gap-1.5 px-3 py-1 bg-[#5C1F1F] hover:bg-[#8B6B6B] border border-[#C4A5A0]/40 text-[#FFE29A] transition-all rounded-none block-shadow-sm active:translate-y-0.5 cursor-pointer"
                         >
                             <Disc className={`w-3.5 h-3.5 ${discoMode !== 'off' ? 'animate-spin' : ''}`} style={{ animationDuration: '4s' }} />
@@ -477,31 +468,30 @@ const Portfolio = () => {
             </header>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 1: HERO OVERVIEW
+                SECTION 1: HERO OVERVIEW & NEWSPAPER MASTHEAD
             ═══════════════════════════════════════════════════════════ */}
             <section
                 id="hero"
                 className="relative min-h-screen flex items-center justify-center pt-24 pb-16 px-6 sm:px-10 lg:px-16 overflow-hidden bg-grid-pattern bg-stripes"
             >
-                {/* Geometric ambient lighting discs in hero */}
+                {/* Geometric ambient lighting discs */}
                 <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#8B6B6B] rounded-full blur-[140px] opacity-30 pointer-events-none animate-pulse"></div>
                 <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#C4A5A0] rounded-full blur-[160px] opacity-25 pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
 
                 <div className="max-w-[1360px] w-full mx-auto relative z-10">
-                    {/* Top Index HUD Coordinate Box */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-8 pb-4 border-b border-[#C4A5A0]/30 font-mono-tech text-xs">
+                    {/* Newspaper Masthead Dateline Bar */}
+                    <div className="border-t-4 border-b-2 border-[#E8DDD3]/40 py-2.5 mb-8 flex flex-wrap items-center justify-between gap-3 font-mono-tech text-xs text-[#E8DDD3] tracking-widest uppercase">
                         <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 01</span>
-                            <span className="text-[#E8DDD3] tracking-widest">// SOFTWARE ENGINEERING & PRODUCT LAB</span>
+                            <span className="font-bold text-[#FFE29A]">THE DAILY DISPATCH</span>
+                            <span className="text-[#C4A5A0]">•</span>
+                            <span>VOL. XXIV NO. 105</span>
                         </div>
-                        <div className="flex items-center gap-3 text-[#C4A5A0]">
-                            <span className="flex items-center gap-1">
-                                <Flame className="w-3.5 h-3.5 text-[#FFE29A]" /> 500+ DSA SOLVED
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                                <Star className="w-3.5 h-3.5 text-[#FFE29A]" /> 300+ DAY STREAK
-                            </span>
+                        <div className="hidden sm:block text-[#C4A5A0]">
+                            PUNJAB, INDIA • SPECIAL REPUTATION EDITION • EST. 2023
+                        </div>
+                        <div className="flex items-center gap-2 text-[#FFE29A]">
+                            <span className="w-2 h-2 rounded-full bg-[#FFE29A] animate-ping"></span>
+                            <span>PRICE: EXCELLENCE</span>
                         </div>
                     </div>
 
@@ -530,7 +520,7 @@ const Portfolio = () => {
                                 Computer Science engineer with high algorithmic rigor and an eye for high-impact user experiences. Architecting reactive web platforms, mobile solutions, and scalable systems with modern frameworks.
                             </p>
 
-                            {/* Blocky Quick Metric Cards */}
+                            {/* Blocky Quick Metric Cards with strict alignment */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono-tech">
                                 {[
                                     { value: '1632', label: 'LEETCODE RATING', sub: 'Knight Contender' },
@@ -540,7 +530,7 @@ const Portfolio = () => {
                                 ].map((stat, i) => (
                                     <div
                                         key={i}
-                                        className="p-3 bg-[#3A1010]/80 border-2 border-[#8B6B6B] rounded-none block-shadow-sm hover:border-[#FFE29A] transition-colors"
+                                        className="p-3 bg-[#3A1010]/80 border-2 border-[#8B6B6B] rounded-none block-shadow-sm hover:border-[#FFE29A] transition-colors text-left"
                                     >
                                         <div className="text-xl sm:text-2xl font-bold text-[#FFE29A] font-syne">{stat.value}</div>
                                         <div className="text-[10px] sm:text-xs font-bold text-white tracking-wider mt-0.5">{stat.label}</div>
@@ -602,13 +592,13 @@ const Portfolio = () => {
                             </div>
                         </div>
 
-                        {/* Right Column: High-Impact Framed Portrait with Disco Corners */}
+                        {/* Right Column: Framed Portrait with Newspaper Cyber Accents */}
                         <div className="lg:col-span-5 flex justify-center">
                             <TiltCard
                                 maxTilt={10}
                                 className="w-full max-w-[380px] sm:max-w-[420px] bg-[#3A1010] border-4 border-[#E8DDD3] p-3 block-shadow-lg disco-card-border"
                             >
-                                {/* Corner Cyber Accents */}
+                                {/* Corner Accents */}
                                 <div className="absolute top-1 left-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">┌ [+]</div>
                                 <div className="absolute top-1 right-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">[+] ┐</div>
                                 <div className="absolute bottom-1 left-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">└ [+]</div>
@@ -622,7 +612,7 @@ const Portfolio = () => {
                                         className="w-full h-full object-cover object-[center_28%] transition-transform duration-700 hover:scale-105"
                                     />
                                     
-                                    {/* Scanline / Shimmer overlay */}
+                                    {/* Scanline overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#2A1212] via-transparent to-transparent opacity-80 pointer-events-none"></div>
 
                                     {/* Live Status Badge overlay */}
@@ -686,11 +676,11 @@ const Portfolio = () => {
             ═══════════════════════════════════════════════════════════ */}
             <section id="about-skills" className="relative min-h-screen py-20 px-6 sm:px-10 lg:px-16 bg-[#A67B7B]/20">
                 <div className="max-w-[1400px] mx-auto">
-                    {/* Section Header */}
+                    {/* Section Header with newspaper rule */}
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
                         <div className="flex items-center gap-2">
                             <span className="px-2.5 py-1 bg-[#5C1F1F] text-[#FFE29A] font-bold">SEC 02</span>
-                            <span className="text-white font-bold text-sm tracking-wider">// PROFILE & TECHNICAL ARSENAL</span>
+                            <span className="text-white font-bold text-sm tracking-wider">// DOSSIER & TECHNICAL ARSENAL</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -720,8 +710,8 @@ const Portfolio = () => {
                                 expandedSection === 'about' ? 'lg:col-span-7' : expandedSection === 'skills' ? 'lg:col-span-4' : 'lg:col-span-6'
                             }`}
                         >
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 01.0 // ABOUT BIOGRAPHY ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ FEATURE STORY // BIOGRAPHY ]</span>
                                 <span className="bg-[#5C1F1F] text-white px-2 py-0.5 font-bold">B.TECH CSE</span>
                             </div>
 
@@ -733,26 +723,22 @@ const Portfolio = () => {
                             </h3>
 
                             <div className="space-y-4 text-sm sm:text-base leading-relaxed text-[#3A1010]">
-                                <p className="font-medium text-lg text-[#5C1F1F]">
-                                    Computer Science & Engineering student at Lovely Professional University (CGPA 7.84) with a strong foundation in algorithmic problem solving and software architecture.
+                                <p className="font-medium text-lg text-[#5C1F1F] drop-cap">
+                                    Computer Science & Engineering student with a strong foundation in programming and problem-solving, deeply passionate about building scalable mobile and web applications.
                                 </p>
 
                                 <p>
-                                    Specialized in Mobile Application Development using Flutter and hands-on full-stack web engineering. Driven by the craft of writing scalable code and shipping intuitive, user-centric digital products that solve real-world problems.
+                                    Currently pursuing B.Tech in Computer Science at Lovely Professional University with a CGPA of 7.84. Completed specialized training in Mobile Application Development using Flutter and have hands-on experience building real-world applications.
                                 </p>
 
                                 <div className="p-4 bg-white/70 border-2 border-[#5C1F1F] font-mono-tech text-xs space-y-2 mt-4 block-shadow-sm">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[#5C1F1F] font-bold">EDUCATION:</span>
-                                        <span className="text-[#2A1212]">B.Tech in Computer Science</span>
+                                        <span className="text-[#5C1F1F] font-bold">FOCUS:</span>
+                                        <span className="text-[#2A1212]">Creating functional, user-friendly applications that solve real problems.</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-[#5C1F1F] font-bold">INSTITUTION:</span>
-                                        <span className="text-[#2A1212]">Lovely Professional University</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-[#5C1F1F] font-bold">ACADEMIC CGPA:</span>
-                                        <span className="text-[#5C1F1F] font-bold bg-[#E8DDD3] px-2 py-0.5">7.84 / 10.0</span>
+                                        <span className="text-[#2A1212]">Lovely Professional University (CGPA 7.84)</span>
                                     </div>
                                 </div>
 
@@ -781,8 +767,8 @@ const Portfolio = () => {
                                 expandedSection === 'skills' ? 'lg:col-span-8' : expandedSection === 'about' ? 'lg:col-span-5' : 'lg:col-span-6'
                             }`}
                         >
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 01.1 // TECHNICAL STACK ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ TECHNICAL DIRECTORY // STACKS ]</span>
                                 <span className="bg-[#5C1F1F] text-white px-2 py-0.5 font-bold">4 STACKS</span>
                             </div>
 
@@ -821,30 +807,32 @@ const Portfolio = () => {
 
                             {/* Skills Grid */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {filteredSkills.map((category) => {
-                                    const Icon = category.icon;
-                                    return (
-                                        <div
-                                            key={category.id}
-                                            className="bg-white/90 p-4 border-2 border-[#5C1F1F] block-shadow-sm"
-                                        >
-                                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#5C1F1F]/20 text-[#5C1F1F] font-mono-tech text-xs font-bold">
-                                                <Icon className="w-4 h-4 text-[#5C1F1F]" />
-                                                <span>{category.name.toUpperCase()}</span>
+                                {skillCategories
+                                    .filter((cat) => activeSkillCategory === 'all' || cat.id === activeSkillCategory)
+                                    .map((category) => {
+                                        const Icon = category.icon;
+                                        return (
+                                            <div
+                                                key={category.id}
+                                                className="bg-white/90 p-4 border-2 border-[#5C1F1F] block-shadow-sm"
+                                            >
+                                                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#5C1F1F]/20 text-[#5C1F1F] font-mono-tech text-xs font-bold">
+                                                    <Icon className="w-4 h-4 text-[#5C1F1F]" />
+                                                    <span>{category.name.toUpperCase()}</span>
+                                                </div>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {category.skills.map((skill) => (
+                                                        <span
+                                                            key={skill}
+                                                            className="px-2.5 py-1 bg-[#5C1F1F] text-white font-mono-tech text-xs font-semibold rounded-none hover:bg-[#2A1212] transition-colors"
+                                                        >
+                                                            {skill}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             </div>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {category.skills.map((skill) => (
-                                                    <span
-                                                        key={skill}
-                                                        className="px-2.5 py-1 bg-[#5C1F1F] text-white font-mono-tech text-xs font-medium rounded-none hover:bg-[#2A1212] transition-colors"
-                                                    >
-                                                        {skill}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
                             </div>
                         </div>
                     </div>
@@ -852,7 +840,7 @@ const Portfolio = () => {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 3: FEATURED PROJECTS
+                SECTION 3: FEATURED PROJECTS (GAZETTE ARCHIVES)
             ═══════════════════════════════════════════════════════════ */}
             <section id="projects" className="relative min-h-screen py-24 px-6 sm:px-10 lg:px-16 bg-[#5C1F1F] bg-grid-pattern">
                 <div className="max-w-[1400px] mx-auto relative z-10">
@@ -862,7 +850,7 @@ const Portfolio = () => {
                             <span className="px-2.5 py-1 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 03</span>
                             <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// PRODUCTION & ENGINEERING ARCHIVES</span>
                         </div>
-                        <span className="text-[#FFE29A] font-bold">[ 06 TOTAL PROJECTS ]</span>
+                        <span className="text-[#FFE29A] font-bold">[ 06 TOTAL CASE STUDIES ]</span>
                     </div>
 
                     <div className="text-center mb-12">
@@ -915,7 +903,7 @@ const Portfolio = () => {
                                         isExpanded ? 'ring-4 ring-[#FFE29A]/50' : 'hover:border-[#FFE29A]'
                                     }`}
                                 >
-                                    {/* Card Top Technical Header */}
+                                    {/* Card Header */}
                                     <div
                                         onClick={() => toggleProject(project.id)}
                                         className="p-5 sm:p-7 flex flex-wrap items-center justify-between gap-4 cursor-pointer border-b-2 border-[#5C1F1F]/15 bg-gradient-to-r from-[#E8DDD3] to-[#DFD0C4]"
@@ -951,7 +939,7 @@ const Portfolio = () => {
                                     {isExpanded && (
                                         <div className="p-6 sm:p-10 border-t border-[#5C1F1F]/20 animate-fade-in">
                                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                                                {/* Left: Project Screenshot Preview */}
+                                                {/* Left: Preview */}
                                                 <div className="lg:col-span-5">
                                                     <div className="relative aspect-video sm:aspect-[16/10] bg-[#2A1212] border-4 border-[#5C1F1F] overflow-hidden block-shadow">
                                                         <img
@@ -960,7 +948,7 @@ const Portfolio = () => {
                                                             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                                                         />
                                                         <div className="absolute top-2 left-2 bg-[#2A1212]/90 text-[#FFE29A] px-2 py-0.5 font-mono-tech text-[10px] font-bold border border-[#FFE29A]/40">
-                                                            LIVE DEMO READY
+                                                            LIVE READY
                                                         </div>
                                                     </div>
 
@@ -982,11 +970,11 @@ const Portfolio = () => {
                                                     </div>
                                                 </div>
 
-                                                {/* Right: Detailed Description & Features */}
+                                                {/* Right: Description & Features */}
                                                 <div className="lg:col-span-7 space-y-5">
                                                     <div>
                                                         <h4 className="text-xs font-mono-tech font-bold text-[#5C1F1F] tracking-wider uppercase mb-1">
-                                                            PROJECT OVERVIEW:
+                                                            CASE OVERVIEW:
                                                         </h4>
                                                         <p className="text-sm sm:text-base text-[#3A1010] leading-relaxed">
                                                             {project.description}
@@ -1081,7 +1069,7 @@ const Portfolio = () => {
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
                         <div className="flex items-center gap-2">
                             <span className="px-2.5 py-1 bg-[#5C1F1F] text-[#FFE29A] font-bold">SEC 04</span>
-                            <span className="text-white font-bold text-sm tracking-wider">// MILESTONES & ACADEMIC PATH</span>
+                            <span className="text-white font-bold text-sm tracking-wider">// MILESTONES & ACADEMIC RECORD</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -1110,8 +1098,8 @@ const Portfolio = () => {
                                 expandedSection === 'achievements' ? 'lg:col-span-7' : expandedSection === 'education' ? 'lg:col-span-5' : 'lg:col-span-6'
                             }`}
                         >
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 04.0 // COMPETITIVE & AWARDS ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ GAZETTE RECORD // AWARDS ]</span>
                                 <Trophy className="w-4 h-4 text-[#5C1F1F]" />
                             </div>
 
@@ -1184,8 +1172,8 @@ const Portfolio = () => {
                                 expandedSection === 'education' ? 'lg:col-span-7' : expandedSection === 'achievements' ? 'lg:col-span-5' : 'lg:col-span-6'
                             }`}
                         >
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 04.1 // ACADEMIC RECORD ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ ACADEMIC CHRONICLE // DEGREES ]</span>
                                 <GraduationCap className="w-4 h-4 text-[#5C1F1F]" />
                             </div>
 
@@ -1262,7 +1250,7 @@ const Portfolio = () => {
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
                         <div className="flex items-center gap-2">
                             <span className="px-2.5 py-1 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 05</span>
-                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// CREDENTIALS & CURRICULUM VITAE</span>
+                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// DIPLOMAS & OFFICIAL RECORD</span>
                         </div>
                         <span className="text-[#FFE29A] font-bold">[ 06 VERIFIED CERTIFICATES ]</span>
                     </div>
@@ -1270,8 +1258,8 @@ const Portfolio = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                         {/* ── CERTIFICATES GALLERY ── */}
                         <div className="lg:col-span-7 bg-[#E8DDD3] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg">
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 05.0 // VERIFIED CREDENTIALS ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ OFFICIAL CERTIFICATION ARCHIVE ]</span>
                                 <Award className="w-4 h-4 text-[#5C1F1F]" />
                             </div>
 
@@ -1332,8 +1320,8 @@ const Portfolio = () => {
 
                         {/* ── RESUME HUB ── */}
                         <div className="lg:col-span-5 bg-[#C4A5A0] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg">
-                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
-                                <span className="font-bold">[ 05.1 // OFFICIAL RESUME ]</span>
+                            <div className="flex items-center justify-between mb-4 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ OFFICIAL CV // CURRICULUM VITAE ]</span>
                                 <FileText className="w-4 h-4 text-[#5C1F1F]" />
                             </div>
 
@@ -1391,7 +1379,7 @@ const Portfolio = () => {
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
                         <div className="flex items-center gap-2">
                             <span className="px-2.5 py-1 bg-[#FFE29A] text-[#5C1F1F] font-bold">SEC 06</span>
-                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// DISPATCH & COMMUNICATION</span>
+                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// DISPATCH & DIRECT COMMUNIQUE</span>
                         </div>
                         <span className="text-[#FFE29A] font-bold">[ DIRECT LINE OPEN ]</span>
                     </div>
@@ -1541,7 +1529,7 @@ const Portfolio = () => {
                     </div>
 
                     <div className="text-[#C4A5A0] text-center">
-                        ENGINEERED WITH REACT, TAILWIND & IMMENSE PASSION ✦
+                        THE DAILY DISPATCH ✦ ENGINEERED WITH REACT & TAILWIND
                     </div>
 
                     <a

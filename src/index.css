@@ -33,6 +33,10 @@
   .font-syne {
     font-family: 'Syne', sans-serif;
   }
+
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
 }
 
 /* Custom Scrollbar */
@@ -44,11 +48,37 @@
 }
 ::-webkit-scrollbar-thumb {
   background: #A67B7B;
-  border-radius: 2px;
+  border-radius: 0px;
   border: 1px solid #5C1F1F;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #E8DDD3;
+}
+
+/* Editorial Newspaper Double Rules & Lines */
+.newspaper-double-rule {
+  border-top: 3px double currentColor;
+  border-bottom: 1px solid currentColor;
+  padding: 4px 0;
+}
+
+.newspaper-rule-bottom {
+  border-bottom: 3px double currentColor;
+}
+
+.newspaper-col-border {
+  border-right: 1px solid rgba(92, 31, 31, 0.2);
+}
+
+.drop-cap::first-letter {
+  font-family: 'Playfair Display', Georgia, serif;
+  float: left;
+  font-size: 3.4rem;
+  line-height: 0.82;
+  font-weight: 900;
+  padding-right: 0.55rem;
+  padding-top: 0.15rem;
+  color: #5C1F1F;
 }
 
 /* Blocky Geometric Textures & Patterns */
@@ -170,11 +200,6 @@
   100% {
     transform: translateX(250%) skewX(-20deg);
   }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(1000%); }
 }
 
 .animate-marquee {
