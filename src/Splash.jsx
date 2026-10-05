@@ -1,208 +1,117 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Terminal, ArrowRight } from 'lucide-react';
 
-const SplashScreen = () => {
+const SplashScreen = ({ onComplete }) => {
+    const [count, setCount] = useState(3);
+    const [isExiting, setIsExiting] = useState(false);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCount((prev) => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        setIsExiting(true);
+                        setTimeout(() => {
+                            if (onComplete) onComplete();
+                        }, 600);
+                    }, 400);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 800);
+
+        return () => clearInterval(interval);
+    }, [onComplete]);
+
+    const handleSkip = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            if (onComplete) onComplete();
+        }, 300);
+    };
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-[#5C1F1F] via-[#8B6B6B] to-[#5C1F1F] overflow-hidden splash-screen">
-            <div className="absolute inset-0">
-                <div className="absolute top-20 left-10 w-96 h-96 bg-[#C4A5A0] rounded-full blur-3xl opacity-20 animate-float hover:opacity-30 transition-opacity duration-1000"></div>
-                <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#E8DDD3] rounded-full blur-3xl opacity-20 animate-float-delayed hover:opacity-30 transition-opacity duration-1000"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#A67B7B] rounded-full blur-3xl opacity-10 animate-pulse-slow"></div>
-            </div>
-
+        <div 
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-[#2A1212] bg-grid-pattern transition-all duration-700 ${
+                isExiting ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
+            }`}
+        >
+            {/* Ambient Disco Spotlight Cones */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(20)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="absolute w-2 h-2 bg-white rounded-full animate-sparkle hover:w-3 hover:h-3 transition-all duration-300"
-                        style={{
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${2 + Math.random() * 2}s`
-                        }}
+                <div className="absolute -top-32 -left-32 w-[550px] h-[550px] bg-[#5C1F1F] rounded-full blur-[120px] opacity-60 animate-pulse"></div>
+                <div className="absolute -bottom-32 -right-32 w-[550px] h-[550px] bg-[#C4A5A0] rounded-full blur-[140px] opacity-35 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#8B6B6B] rounded-full blur-[160px] opacity-20"></div>
+            </div>
+
+            {/* Micro Dot Matrix Overlay */}
+            <div className="absolute inset-0 bg-dot-matrix opacity-30 pointer-events-none"></div>
+
+            {/* Corner Cyber Brackets */}
+            <div className="absolute top-6 left-6 font-mono-tech text-xs text-[#C4A5A0]/60 tracking-widest hidden sm:block">
+                [ SYS_INIT // 2026.0 ]
+            </div>
+            <div className="absolute top-6 right-6 font-mono-tech text-xs text-[#C4A5A0]/60 tracking-widest hidden sm:block">
+                [ LAT: 31.25°N // LON: 75.70°E ]
+            </div>
+            <div className="absolute bottom-6 left-6 font-mono-tech text-xs text-[#C4A5A0]/60 tracking-widest hidden sm:block">
+                [ ARCHITECTURE: REACT + DISCO_VFX ]
+            </div>
+            <div className="absolute bottom-6 right-6 z-20">
+                <button
+                    onClick={handleSkip}
+                    className="font-mono-tech text-xs text-[#E8DDD3] bg-[#5C1F1F]/80 hover:bg-[#5C1F1F] border border-[#C4A5A0]/40 px-4 py-2 rounded-sm transition-all duration-300 flex items-center gap-2 hover:translate-x-1 block-shadow-sm cursor-pointer"
+                >
+                    SKIP INTRO <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+            </div>
+
+            {/* Main Stage Content */}
+            <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
+                {/* Tech Badge */}
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-[#5C1F1F]/70 border border-[#C4A5A0]/40 text-[#E8DDD3] font-mono-tech text-xs tracking-wider mb-8 block-shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-[#FFE29A] animate-ping"></span>
+                    <span>INITIALIZING PORTFOLIO ENGINE</span>
+                    <span className="text-[#C4A5A0]">[{count > 0 ? `0${count}` : 'READY'}]</span>
+                </div>
+
+                {/* Decorative Laser Bar */}
+                <div className="flex items-center justify-center gap-4 mb-6">
+                    <div className="h-[2px] w-16 sm:w-28 bg-gradient-to-r from-transparent via-[#C4A5A0] to-transparent"></div>
+                    <div className="text-[#FFE29A] text-xl animate-spin" style={{ animationDuration: '8s' }}>
+                        ✦
+                    </div>
+                    <div className="h-[2px] w-16 sm:w-28 bg-gradient-to-r from-transparent via-[#C4A5A0] to-transparent"></div>
+                </div>
+
+                {/* Big Bold Editorial Name */}
+                <h1 
+                    className="text-white text-5xl sm:text-7xl md:text-8xl font-black tracking-tight mb-2 uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" 
+                    style={{ fontFamily: 'Playfair Display, serif' }}
+                >
+                    KHUSHI DHIR
+                </h1>
+
+                <p className="text-[#E8DDD3] font-mono-tech text-xs sm:text-sm tracking-[0.25em] uppercase mb-8">
+                    Software Engineer <span className="text-[#FFE29A]">✦</span> Full Stack <span className="text-[#FFE29A]">✦</span> Flutter
+                </p>
+
+                {/* Blocky Progress Bar */}
+                <div className="w-64 sm:w-80 h-2 bg-[#1A0A0A] mx-auto rounded-none border border-[#C4A5A0]/40 p-[2px] relative overflow-hidden">
+                    <div 
+                        className="h-full bg-gradient-to-r from-[#5C1F1F] via-[#C4A5A0] to-[#FFE29A] transition-all duration-700 ease-out"
+                        style={{ width: `${((4 - count) / 3) * 100}%` }}
                     ></div>
-                ))}
-            </div>
-
-            <div className="relative z-10 text-center px-6 group">
-                <div className="flex items-center justify-center mb-8 animate-slide-down">
-                    <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#E8DDD3] to-transparent group-hover:w-32 transition-all duration-500"></div>
-                    <div className="mx-4 text-[#E8DDD3] text-2xl hover:scale-125 hover:rotate-90 transition-all duration-500 cursor-pointer">✦</div>
-                    <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#E8DDD3] to-transparent group-hover:w-32 transition-all duration-500"></div>
                 </div>
 
-                <div className="mb-6">
-                    <h1 className="text-white text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-wider mb-2 animate-fade-in-scale hover:tracking-[0.3em] hover:text-[#E8DDD3] transition-all duration-700 cursor-default" style={{fontFamily: 'serif', fontWeight: '900'}}>
-                        KHUSHI
-                    </h1>
-                    <h2 className="text-[#E8DDD3] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-[0.3em] animate-fade-in-scale-delayed hover:tracking-[0.4em] hover:text-white transition-all duration-700 cursor-default">
-                        DHIR
-                    </h2>
-                </div>
-
-                <div className="animate-fade-in-up-delayed">
-                    <p className="text-[#C4A5A0] text-lg sm:text-xl md:text-2xl font-light tracking-widest mb-8 cursor-default">
-                        <span className="inline-block hover:text-white hover:scale-110 transition-all duration-300 mx-1">DEVELOPER</span>
-                        <span className="inline-block mx-2">•</span>
-                        <span className="inline-block hover:text-white hover:scale-110 transition-all duration-300 mx-1">DESIGNER</span>
-                        <span className="inline-block mx-2">•</span>
-                        <span className="inline-block hover:text-white hover:scale-110 transition-all duration-300 mx-1">DREAMER</span>
-                    </p>
-                </div>
-
-                <div className="flex items-center justify-center animate-slide-up-delayed">
-                    <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#E8DDD3] to-transparent group-hover:w-32 transition-all duration-500"></div>
-                    <div className="mx-4 text-[#E8DDD3] text-2xl hover:scale-125 hover:rotate-90 transition-all duration-500 cursor-pointer">✦</div>
-                    <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#E8DDD3] to-transparent group-hover:w-32 transition-all duration-500"></div>
-                </div>
-
-                <div className="mt-12 flex justify-center items-center gap-2 animate-fade-in-late">
-                    <div className="w-2 h-2 bg-[#E8DDD3] rounded-full animate-bounce hover:w-3 hover:h-3 hover:bg-white transition-all duration-300 cursor-pointer"></div>
-                    <div className="w-2 h-2 bg-[#C4A5A0] rounded-full animate-bounce hover:w-3 hover:h-3 hover:bg-white transition-all duration-300 cursor-pointer" style={{animationDelay: '0.2s'}}></div>
-                    <div className="w-2 h-2 bg-[#A67B7B] rounded-full animate-bounce hover:w-3 hover:h-3 hover:bg-white transition-all duration-300 cursor-pointer" style={{animationDelay: '0.4s'}}></div>
-                </div>
-
-                <div className="mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-                    <p className="text-[#E8DDD3] text-sm tracking-widest animate-fade-in">
-                        Welcome to my world ✨
-                    </p>
+                {/* Bottom Welcome Subtitle */}
+                <div className="mt-8 flex justify-center items-center gap-3 text-xs font-mono-tech text-[#C4A5A0]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#FFE29A] animate-bounce" />
+                    <span>ENTERING DIGITAL SPACE</span>
+                    <Sparkles className="w-3.5 h-3.5 text-[#FFE29A] animate-bounce" style={{ animationDelay: '0.3s' }} />
                 </div>
             </div>
-
-            <div className="absolute top-8 left-8 text-[#E8DDD3] text-4xl opacity-30 animate-spin-slow hover:opacity-80 hover:scale-150 hover:text-white transition-all duration-500 cursor-pointer">✦</div>
-            <div className="absolute top-8 right-8 text-[#C4A5A0] text-4xl opacity-30 animate-spin-slow hover:opacity-80 hover:scale-150 hover:text-white transition-all duration-500 cursor-pointer" style={{animationDelay: '1s'}}>✦</div>
-            <div className="absolute bottom-8 left-8 text-[#A67B7B] text-4xl opacity-30 animate-spin-slow hover:opacity-80 hover:scale-150 hover:text-white transition-all duration-500 cursor-pointer" style={{animationDelay: '2s'}}>✦</div>
-            <div className="absolute bottom-8 right-8 text-[#E8DDD3] text-4xl opacity-30 animate-spin-slow hover:opacity-80 hover:scale-150 hover:text-white transition-all duration-500 cursor-pointer" style={{animationDelay: '1.5s'}}>✦</div>
-
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute w-96 h-96 bg-white rounded-full blur-3xl opacity-0 hover:opacity-5 transition-opacity duration-500" style={{
-                    transform: 'translate(-50%, -50%)',
-                    left: '50%',
-                    top: '50%'
-                }}></div>
-            </div>
-
-            <style jsx>{`
-                @keyframes fade-in-scale {
-                    from {
-                        opacity: 0;
-                        transform: scale(0.8);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: scale(1);
-                    }
-                }
-                @keyframes slide-down {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                @keyframes slide-up {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                @keyframes fade-in-up {
-                    from {
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                @keyframes float {
-                    0%, 100% {
-                        transform: translateY(0px);
-                    }
-                    50% {
-                        transform: translateY(-20px);
-                    }
-                }
-                @keyframes float-delayed {
-                    0%, 100% {
-                        transform: translateY(0px);
-                    }
-                    50% {
-                        transform: translateY(20px);
-                    }
-                }
-                @keyframes sparkle {
-                    0%, 100% {
-                        opacity: 0;
-                        transform: scale(0);
-                    }
-                    50% {
-                        opacity: 1;
-                        transform: scale(1);
-                    }
-                }
-                @keyframes pulse-slow {
-                    0%, 100% {
-                        opacity: 0.1;
-                    }
-                    50% {
-                        opacity: 0.2;
-                    }
-                }
-                @keyframes spin-slow {
-                    from {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-                .animate-fade-in-scale {
-                    animation: fade-in-scale 0.8s ease-out forwards;
-                }
-                .animate-fade-in-scale-delayed {
-                    animation: fade-in-scale 0.8s ease-out 0.3s forwards;
-                    opacity: 0;
-                }
-                .animate-slide-down {
-                    animation: slide-down 0.6s ease-out forwards;
-                }
-                .animate-slide-up-delayed {
-                    animation: slide-up 0.6s ease-out 0.9s forwards;
-                    opacity: 0;
-                }
-                .animate-fade-in-up-delayed {
-                    animation: fade-in-up 0.6s ease-out 0.6s forwards;
-                    opacity: 0;
-                }
-                .animate-fade-in-late {
-                    animation: fade-in-up 0.6s ease-out 1.2s forwards;
-                    opacity: 0;
-                }
-                .animate-float {
-                    animation: float 6s ease-in-out infinite;
-                }
-                .animate-float-delayed {
-                    animation: float-delayed 6s ease-in-out infinite;
-                }
-                .animate-sparkle {
-                    animation: sparkle 3s ease-in-out infinite;
-                }
-                .animate-pulse-slow {
-                    animation: pulse-slow 4s ease-in-out infinite;
-                }
-                .animate-spin-slow {
-                    animation: spin-slow 20s linear infinite;
-                }
-            `}</style>
         </div>
     );
 };

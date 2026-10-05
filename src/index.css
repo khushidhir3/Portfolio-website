@@ -1,1 +1,258 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --burgundy-deep: #3A1010;
+    --burgundy: #5C1F1F;
+    --burgundy-dark: #2A1212;
+    --mauve: #8B6B6B;
+    --mauve-light: #A67B7B;
+    --rose-dusty: #C4A5A0;
+    --rose-soft: #D4B8B3;
+    --cream: #E8DDD3;
+    --cream-light: #FAF7F2;
+    --gold: #F3C978;
+    --gold-glow: #FFE29A;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #5C1F1F;
+    color: #FAF7F2;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif-luxury {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .font-mono-tech {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .font-syne {
+    font-family: 'Syne', sans-serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #2A1212;
+}
+::-webkit-scrollbar-thumb {
+  background: #A67B7B;
+  border-radius: 2px;
+  border: 1px solid #5C1F1F;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E8DDD3;
+}
+
+/* Blocky Geometric Textures & Patterns */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(232, 221, 211, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(232, 221, 211, 0.05) 1px, transparent 1px);
+}
+
+.bg-dot-matrix {
+  background-image: radial-gradient(rgba(232, 221, 211, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.bg-dot-matrix-dense {
+  background-image: radial-gradient(rgba(92, 31, 31, 0.18) 1.2px, transparent 1.2px);
+  background-size: 10px 10px;
+}
+
+.bg-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+/* Blocky Neo-Brutalist Shadows */
+.block-shadow-sm {
+  box-shadow: 3px 3px 0px #2A1212;
+}
+
+.block-shadow {
+  box-shadow: 6px 6px 0px #2A1212;
+}
+
+.block-shadow-lg {
+  box-shadow: 10px 10px 0px #1a0a0a;
+}
+
+.block-shadow-cream {
+  box-shadow: 6px 6px 0px #E8DDD3;
+}
+
+.block-shadow-rose {
+  box-shadow: 6px 6px 0px #C4A5A0;
+}
+
+.block-shadow-gold {
+  box-shadow: 5px 5px 0px #D4AF37;
+}
+
+/* Disco Light Beams & Strobe FX */
+@keyframes disco-spin-slow {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.08); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes disco-pulse-lights {
+  0%, 100% {
+    opacity: 0.35;
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  33% {
+    opacity: 0.65;
+    filter: hue-rotate(25deg) brightness(1.25);
+  }
+  66% {
+    opacity: 0.5;
+    filter: hue-rotate(-20deg) brightness(1.15);
+  }
+}
+
+@keyframes disco-beam-sweep {
+  0% {
+    transform: rotate(-35deg) scaleY(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: rotate(35deg) scaleY(1.3);
+    opacity: 0.45;
+  }
+  100% {
+    transform: rotate(-35deg) scaleY(1);
+    opacity: 0.2;
+  }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.3) rotate(90deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px #FFE29A);
+  }
+}
+
+@keyframes shimmer-sheen {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 24s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 26s linear infinite;
+}
+
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+.animate-disco-spin {
+  animation: disco-spin-slow 22s linear infinite;
+}
+
+.animate-disco-pulse {
+  animation: disco-pulse-lights 6s ease-in-out infinite;
+}
+
+.animate-disco-beam {
+  animation: disco-beam-sweep 8s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-twinkle {
+  animation: sparkle-twinkle 3s ease-in-out infinite;
+}
+
+.shimmer-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: shimmer-sheen 3.5s infinite;
+  pointer-events: none;
+}
+
+/* High-effort interactive hover lift & press */
+.hover-press {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-press:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0px #2A1212;
+}
+.hover-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #2A1212;
+}
+
+.disco-card-border {
+  position: relative;
+}
+.disco-card-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, rgba(255, 226, 154, 0.6), rgba(228, 165, 152, 0.6), rgba(232, 221, 211, 0.8), rgba(166, 123, 123, 0.4));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.disco-card-border:hover::before {
+  opacity: 1;
+  filter: drop-shadow(0 0 12px rgba(255, 226, 154, 0.5));
+}

@@ -1,11 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import emailjs from '@emailjs/browser';
+import {
+    Sparkles,
+    Disc,
+    Code,
+    Terminal,
+    Trophy,
+    GraduationCap,
+    Award,
+    Mail,
+    ExternalLink,
+    Github,
+    Linkedin,
+    Copy,
+    Check,
+    ChevronDown,
+    ChevronRight,
+    Layers,
+    Laptop,
+    Star,
+    Flame,
+    Zap,
+    ArrowUpRight,
+    ArrowDown,
+    Filter,
+    FileText,
+    Send,
+    Volume2,
+    VolumeX,
+    Eye,
+    X,
+    FolderGit2,
+    Cpu,
+    Compass
+} from 'lucide-react';
+
+import DiscoLightsCanvas from './components/DiscoLightsCanvas';
+import TiltCard from './components/TiltCard';
+import { soundFX } from './utils/soundFX';
+
 import profile from './assets/profile.png';
 import about from './assets/about.png';
 import resumePreview from './assets/resumePreview.png';
 import portfolio from './assets/portfolio.png';
-import MAD from './assets/MAD.jpg'
-import emailjs from '@emailjs/browser';
+import MAD from './assets/MAD.jpg';
 import CT from './assets/CT.jpg';
 import OOP from './assets/OOP.jpg';
 import DSA from './assets/DSA.jpg';
@@ -15,26 +54,106 @@ import Mindhorizon from './assets/MindHorizon.png';
 import Whiskarts from './assets/Whiskarts.png';
 import Lifestream from './assets/Lifestream.png';
 import schneiderlink from './assets/schneiderlink.png';
+
 const Portfolio = () => {
-    const [expandedSection, setExpandedSection] = useState(null);
-    const [expandedProject, setExpandedProject] = useState(null);
-    const toggleSection = (section) => {
-        setExpandedSection(expandedSection === section ? null : section);
-    };
+    // Disco lighting & ambient state
+    const [discoMode, setDiscoMode] = useState('disco'); // 'disco' | 'luxe' | 'off'
+    const [soundEnabled, setSoundEnabled] = useState(false);
+    const [mousePos, setMousePos] = useState({ x: null, y: null });
+    const [activeSection, setActiveSection] = useState('hero');
+    const [scrollProgress, setScrollProgress] = useState(0);
 
-    const toggleProject = (project) => {
-        setExpandedProject(expandedProject === project ? null : project);
-    };
+    // Section collapse / expansion states
+    const [expandedSection, setExpandedSection] = useState('about');
+    const [expandedProject, setExpandedProject] = useState('schneiderlink');
+    const [projectFilter, setProjectFilter] = useState('all');
+    const [selectedCert, setSelectedCert] = useState(null);
+    const [skillSearch, setSkillSearch] = useState('');
+    const [activeSkillCategory, setActiveSkillCategory] = useState('all');
+    const [copiedEmail, setCopiedEmail] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState(null);
 
+    // Form data for EmailJS
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         message: ''
     });
 
+    // Track mouse coordinates for dynamic spotlight
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            setMousePos({ x: e.clientX, y: e.clientY });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+    // Track scroll progress & active section
+    useEffect(() => {
+        const handleScroll = () => {
+            const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const currentScroll = window.scrollY;
+            if (totalScroll > 0) {
+                setScrollProgress((currentScroll / totalScroll) * 100);
+            }
+
+            const sections = ['hero', 'about-skills', 'projects', 'achievements-education', 'certificates-resume', 'contact'];
+            for (const sectionId of sections) {
+                const el = document.getElementById(sectionId);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.2) {
+                        setActiveSection(sectionId);
+                        break;
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const toggleSound = () => {
+        const next = !soundEnabled;
+        setSoundEnabled(next);
+        soundFX.enabled = next;
+        if (next) soundFX.playChime();
+    };
+
+    const cycleDiscoMode = () => {
+        if (soundEnabled) soundFX.playDiscoBeam();
+        setDiscoMode((prev) => {
+            if (prev === 'disco') return 'luxe';
+            if (prev === 'luxe') return 'off';
+            return 'disco';
+        });
+    };
+
+    const copyEmailToClipboard = () => {
+        if (soundEnabled) soundFX.playPop(880);
+        navigator.clipboard.writeText('dhir.khushi.2005@gmail.com');
+        setCopiedEmail(true);
+        setTimeout(() => setCopiedEmail(false), 2500);
+    };
+
+    const toggleSection = (section) => {
+        if (soundEnabled) soundFX.playPop(520);
+        setExpandedSection(expandedSection === section ? null : section);
+    };
+
+    const toggleProject = (projectId) => {
+        if (soundEnabled) soundFX.playPop(620);
+        setExpandedProject(expandedProject === projectId ? null : projectId);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        setIsSubmitting(true);
+        setSubmitStatus(null);
 
         emailjs.send(
             'service_6d1kbj7',
@@ -47,12 +166,17 @@ const Portfolio = () => {
             'wMDswmuF8o8YusqIS'
         )
             .then(() => {
-                alert('✅ Message sent successfully!');
+                if (soundEnabled) soundFX.playChime();
+                setIsSubmitting(false);
+                setSubmitStatus('success');
                 setFormData({ name: '', email: '', message: '' });
+                setTimeout(() => setSubmitStatus(null), 5000);
             })
             .catch((error) => {
                 console.error(error);
-                alert('❌ Failed to send message. Try again.');
+                setIsSubmitting(false);
+                setSubmitStatus('error');
+                setTimeout(() => setSubmitStatus(null), 5000);
             });
     };
 
@@ -60,8 +184,10 @@ const Portfolio = () => {
         {
             id: 'schneiderlink',
             name: 'SCHNEIDLINK',
+            category: 'fullstack',
             image: schneiderlink,
             subtitle: 'Field Service Dispatch & Tracking System',
+            tag: 'FEATURED DISPATCH PLATFORM',
             description:
                 'A comprehensive Uber-like platform for field service management and real-time coordination. Enables seamless job dispatching, live technician assignment, and role-based communication across admins, clients, and technicians.',
             features: [
@@ -78,8 +204,10 @@ const Portfolio = () => {
         {
             id: 'lifestream',
             name: 'LIFESTREAM',
+            category: 'fullstack',
             image: Lifestream,
             subtitle: 'Blood Donation Platform',
+            tag: 'FULL STACK HEALTHCARE',
             description:
                 'A full-stack blood donation platform enabling users to register as donors, locate them through client-side search and filtering, and connect with those in need via connection workflows and alerts.',
             features: [
@@ -96,16 +224,18 @@ const Portfolio = () => {
         {
             id: 'notesheet',
             name: 'NOTESHEET TRACKER',
-            image:  Notesheet,
+            category: 'mobile',
+            image: Notesheet,
             subtitle: 'Academic Workflow Automation',
+            tag: 'MOBILE & CLOUD',
             description:
                 'A structured digital platform that streamlines the submission, review, and approval of academic note sheets, enabling efficient coordination between students and HODs.',
             features: [
                 'Secure authentication with role-based access (Student, HOD)',
-                'Real-time note sheet status tracking',
-                'Automated approval and rejection workflow',
-                'Email and in-app notifications',
-                'Responsive UI for mobile and web'
+                'Real-time note sheet status tracking and live state sync',
+                'Automated approval and rejection workflow with audit trail',
+                'Email and in-app notifications for instant stage updates',
+                'Responsive UI for mobile and web built on Flutter'
             ],
             tech: ['Flutter', 'Dart', 'Firebase', 'Supabase', 'REST API'],
             github: 'https://github.com/khushidhir3/Notesheet_Tracker',
@@ -114,54 +244,60 @@ const Portfolio = () => {
         {
             id: 'mindhorizon',
             name: 'MIND HORIZON',
+            category: 'web',
             image: Mindhorizon,
             subtitle: 'Mental Health Awareness Platform',
+            tag: 'HEALTH ASSESSMENT',
             description:
                 'An interactive quiz-based web platform designed to identify early indicators of stress, anxiety, and emotional imbalance, offering personalized insights and guidance.',
             features: [
-                'Quiz-based mental health assessment',
-                'Automated scoring and behavior analysis',
-                'Personalized self-care recommendations',
-                'Focus on early awareness and prevention',
-                'Simple and accessible user interface'
+                'Quiz-based mental health assessment with scoring models',
+                'Automated scoring and behavior pattern analysis',
+                'Personalized self-care recommendations & mental wellness insights',
+                'Focus on early awareness, coping methods, and prevention',
+                'Simple and accessible user interface tailored for all ages'
             ],
-            tech: ['HTML', 'CSS', 'JavaScript', 'MySQL'],
+            tech: ['HTML5', 'CSS3', 'JavaScript', 'MySQL'],
             github: 'https://github.com/khushidhir3/Mental-health-awareness-among-children',
             demo: '#'
         },
         {
             id: 'whiskarts',
             name: 'WHISKARTS',
+            category: 'web',
             image: Whiskarts,
             subtitle: 'E-commerce Platform',
+            tag: 'RETAIL PLATFORM',
             description:
                 'A cute modern e-commerce web application built to deliver a smooth shopping experience with product browsing, cart management, and user-friendly navigation.',
             features: [
-                'Product listing with category-based filtering',
-                'Dynamic cart and checkout flow',
-                'Responsive design for all screen sizes',
-                'Clean and modern UI focused on usability',
-                'Scalable frontend architecture'
+                'Product listing with category-based multi-tier filtering',
+                'Dynamic cart, promo code handler, and checkout flow',
+                'Responsive design with animated micro-interactions across devices',
+                'Clean and modern UI focused on usability and conversion',
+                'Scalable frontend architecture with modular React components'
             ],
-            tech: ['React', 'JavaScript', 'CSS', 'Node.js'],
+            tech: ['React', 'JavaScript', 'CSS3', 'Node.js'],
             github: 'https://github.com/khushidhir3/Whiskarts',
             demo: '#'
         },
         {
             id: 'portfolio',
             name: 'PORTFOLIO WEBSITE',
+            category: 'web',
             image: portfolio,
             subtitle: 'Personal Brand & Showcase',
+            tag: 'CYBER-LUXE EXPERIENCE',
             description:
-                'A visually rich, interactive portfolio website designed to showcase projects, skills, achievements, and professional growth with smooth animations and responsive design.',
+                'A visually rich, interactive portfolio website designed to showcase projects, skills, achievements, and professional growth with smooth animations, custom disco lighting, and responsive design.',
             features: [
-                'Interactive section-based layout',
-                'Smooth animations and transitions',
-                'Fully responsive across devices',
-                'Clean typography and visual hierarchy',
-                'Optimized for performance and readability'
+                'Interactive section-based neo-brutalist blocky layout',
+                'Custom 2D Canvas disco lighting engine with mouse-tracked spotlight',
+                'Fully responsive design with 3D tilt cards and retro HUD details',
+                'Clean editorial typography, custom scrollbar, and visual hierarchy',
+                'Optimized for performance, SEO, accessibility, and high visual impact'
             ],
-            tech: ['React', 'Tailwind CSS', 'JavaScript'],
+            tech: ['React', 'Tailwind CSS', 'Canvas API', 'JavaScript (ES6+)'],
             github: 'https://github.com/khushidhir3/Portfolio-website',
             demo: '#'
         }
@@ -173,6 +309,7 @@ const Portfolio = () => {
             title: 'Mobile App Development using Flutter',
             issuer: 'CipherSchools',
             date: 'July 2025',
+            badge: 'FLUTTER EXPERT',
             image: MAD,
             link: 'https://www.cipherschools.com/certificate/preview?id=687e16e27efd6d5090703c3f'
         },
@@ -181,6 +318,7 @@ const Portfolio = () => {
             title: 'Data Structures & Algorithm',
             issuer: 'IamNeo',
             date: 'January 2025',
+            badge: 'ALGORITHMS & DSA',
             image: DSA,
             link: 'https://lpucolab438.examly.io/certificate/U2FsdGVkX1%2BrLbF7s0kcmBWo4uLb0gS4LpUyDfr%2FlMc%3D'
         },
@@ -189,6 +327,7 @@ const Portfolio = () => {
             title: 'Social Networks',
             issuer: 'NPTEL',
             date: 'May 2025',
+            badge: 'GRAPH & NETWORK THEORY',
             image: MAD,
             link: 'https://internalapp.nptel.ac.in/noc/Ecertificate/?q=NPTEL25CS65S64750098204446322'
         },
@@ -197,6 +336,7 @@ const Portfolio = () => {
             title: 'Object Oriented Programming',
             issuer: 'IamNeo',
             date: 'January 2025',
+            badge: 'SYSTEM DESIGN & OOP',
             image: OOP,
             link: 'https://lpucolab438.examly.io/certificate/U2FsdGVkX19rwmrlqZAufSa7quyGxZs%2FBG2riTom0gc%3D'
         },
@@ -205,6 +345,7 @@ const Portfolio = () => {
             title: 'Java Programming',
             issuer: 'IamNeo',
             date: 'May 2025',
+            badge: 'CORE JAVA & CONCURRENCY',
             image: JP,
             link: 'https://lpucolab438.examly.io/certificate/U2FsdGVkX1%2BVpzdjk45vwHNMojAPgmk4PcOmlaJWNkc%3D'
         },
@@ -213,579 +354,1262 @@ const Portfolio = () => {
             title: 'Computational Theory : Language Principle and Finite Automata Theory',
             issuer: 'Infosys Springboard',
             date: 'August 2025',
+            badge: 'TOC & AUTOMATA',
             image: CT,
             link: 'https://verify.onwingspan.com/'
         }
     ];
 
+    const skillCategories = [
+        {
+            id: 'languages',
+            name: 'Languages',
+            icon: Code,
+            skills: ['Java', 'C++', 'JavaScript (ES6+)', 'SQL', 'C', 'Dart', 'TypeScript', 'HTML5/CSS3']
+        },
+        {
+            id: 'frameworks',
+            name: 'Frameworks & Libs',
+            icon: Layers,
+            skills: ['React.js', 'Next.js', 'SpringBoot', 'Node.js', 'Tailwind CSS', 'Flutter', 'Inertia.js']
+        },
+        {
+            id: 'databases',
+            name: 'Databases & Cloud',
+            icon: Cpu,
+            skills: ['PostgreSQL', 'MongoDB', 'Firebase', 'Supabase', 'MySQL', 'Prisma ORM', 'SQLite']
+        },
+        {
+            id: 'tools',
+            name: 'Tools & Ecosystem',
+            icon: Terminal,
+            skills: ['Postman', 'Git & GitHub', 'IntelliJ IDEA', 'VS Code', 'Figma', 'Vite', 'WebSockets']
+        }
+    ];
+
+    const filteredProjects = projects.filter((p) => {
+        if (projectFilter === 'all') return true;
+        if (projectFilter === 'fullstack') return p.category === 'fullstack';
+        if (projectFilter === 'mobile') return p.category === 'mobile';
+        if (projectFilter === 'web') return p.category === 'web';
+        return true;
+    });
+
+    const filteredSkills = skillCategories.map((cat) => ({
+        ...cat,
+        skills: cat.skills.filter((s) => s.toLowerCase().includes(skillSearch.toLowerCase()))
+    })).filter((cat) => activeSkillCategory === 'all' || cat.id === activeSkillCategory);
+
     return (
-        <div className="bg-[#A67B7B]">
+        <div className="relative bg-[#5C1F1F] text-[#FAF7F2] min-h-screen selection:bg-[#FFE29A] selection:text-[#3A1010]">
             <Analytics />
-            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden py-16 px-6 sm:px-10 md:px-14 lg:px-20">
-                <div className="max-w-[1240px] w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16">
-                    <div className="flex-1 text-center md:text-left">
-                        <h1 className="text-white text-[52px] sm:text-[70px] md:text-[86px] lg:text-[118px] font-bold leading-none tracking-wider mb-6 md:mb-10 hover-lift" style={{fontFamily: 'serif', fontWeight: '900'}}>
-                            PORTFOLIO
-                        </h1>
-                        <div className="space-y-2 md:space-y-3">
-                            <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-widest hover-glow">KHUSHI</h2>
-                            <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-widest hover-glow">DHIR</h2>
+
+            {/* High Performance Disco Light Canvas */}
+            <DiscoLightsCanvas mode={discoMode} enabled={discoMode !== 'off'} mousePos={mousePos} />
+
+            {/* Floating Top HUD Status Bar */}
+            <header className="fixed top-0 left-0 right-0 z-40 bg-[#2A1212]/90 backdrop-blur-md border-b border-[#C4A5A0]/20 text-[#E8DDD3] px-4 py-2.5 transition-all">
+                {/* Scroll progress bar */}
+                <div 
+                    className="absolute top-0 left-0 h-[2.5px] bg-gradient-to-r from-[#C4A5A0] via-[#FFE29A] to-[#E8DDD3] transition-all duration-150"
+                    style={{ width: `${scrollProgress}%` }}
+                ></div>
+
+                <div className="max-w-[1400px] mx-auto flex items-center justify-between text-xs font-mono-tech">
+                    {/* Left: System Status */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 px-2.5 py-1 bg-[#3A1010] border border-[#5C1F1F] rounded-none block-shadow-sm">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span className="font-bold tracking-wider text-white">KHUSHI.SYS</span>
+                            <span className="text-[#C4A5A0] hidden sm:inline">[ONLINE]</span>
                         </div>
-                        <div className="text-white text-sm md:text-base font-light mt-6 md:mt-10 space-y-1.5">
-                            <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="block text-base md:text-lg hover:text-[#C4A5A0] transition-all duration-300 hover:translate-x-2">LinkedIn: khushidhir3</a>
-                            <a href="https://github.com/khushidhir3" target="_blank" rel="noopener noreferrer" className="block hover:text-[#C4A5A0] text-base md:text-lg transition-all duration-300 hover:translate-x-2">GitHub: khushidhir3</a>
-                            <a href="mailto:dhir.khushi.2005@gmail.com" className="block hover:text-[#C4A5A0] transition-all duration-300 text-base md:text-lg hover:translate-x-2">Email: dhir.khushi.2005@gmail.com</a>
-                        </div>
+                        <span className="hidden md:inline text-[#C4A5A0]/60">
+                            LAT 31.25°N • LON 75.70°E
+                        </span>
                     </div>
 
-                    <div className="flex-shrink-0 md:mr-2 lg:mr-6">
-                        <div className="w-[270px] h-[410px] sm:w-[310px] sm:h-[460px] md:w-[340px] md:h-[500px] lg:w-[380px] lg:h-[540px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm relative overflow-hidden shadow-2xl flex items-center justify-center hover-scale">
-                            <img src={profile} alt="Profile" className="w-full h-full object-cover object-[center_30%]" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-sm animate-bounce">
-                    <div className="flex flex-col items-center gap-2">
-                        <span className="tracking-widest">SCROLL</span>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div className={`transition-all duration-500 ${expandedSection === 'about' || expandedSection === 'skills' ? 'min-h-screen' : 'min-h-screen md:h-screen'} flex flex-col md:flex-row`}>
-                <div
-                    className={`transition-all duration-500 bg-[#E8DDD3] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'about' ? 'w-full' : expandedSection === 'skills' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('about')}
-                >
-                    {expandedSection === 'skills' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>ABOUT ME</h3>
-                        </div>
-                    ) : (
-                        <div className="max-w-[700px] w-full">
-                            <div className={`flex flex-col ${expandedSection === 'about' ? 'md:flex-row md:items-center md:justify-between md:gap-16' : ''}`}>
-                                <div className="flex-1">
-                                    <h3 className={`text-[#5C1F1F] font-bold mb-4 md:mb-8 leading-none transition-all duration-500 hover-lift ${expandedSection === 'about' ? 'text-5xl md:text-[100px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                        ABOUT<br/>ME
-                                    </h3>
-                                    <p
-                                        className={`text-[#5C1F1F] leading-relaxed mb-4 md:mb-8 transition-all duration-500 ${
-                                            expandedSection === 'about'
-                                                ? 'text-base md:text-xl'
-                                                : 'text-sm md:text-base'
-                                        }`}
-                                    >
-                                        Computer Science & Engineering student with a strong foundation in programming and problem-solving,<br className="hidden md:block"/>
-                                        deeply passionate about building scalable mobile and web applications
-                                    </p>
-
-                                    {expandedSection === 'about' && (
-                                        <div className="mt-4 md:mt-8 text-[#5C1F1F] text-base md:text-lg leading-relaxed space-y-3 md:space-y-4 animate-fade-in">
-                                            <p>
-                                                Currently pursuing B.Tech in Computer Science at Lovely Professional University with a CGPA of 7.84.
-                                            </p>
-                                            <p>
-                                                Completed specialized training in Mobile Application Development using Flutter and have hands-on experience building real-world applications.
-                                            </p>
-                                            <p className="font-semibold text-lg md:text-xl">
-                                                My focus: Creating functional, user-friendly applications that solve real problems and enhance user experience.
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                                {expandedSection === 'about' && (
-                                    <div className="w-full md:w-[450px] h-[400px] md:h-[550px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm flex-shrink-0 shadow-2xl animate-fade-in mt-6 md:mt-0 hover-scale">
-                                        <div className="w-full h-full flex items-center justify-center text-white text-sm">
-                                            <img src={about} alt="Profile" className="w-full h-full object-cover" />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div
-                    className={`transition-all duration-500 bg-[#C4A5A0] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'skills' ? 'w-full' : expandedSection === 'about' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('skills')}
-                >
-                    {expandedSection === 'about' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>SKILLS</h3>
-                        </div>
-                    ) : (
-                        <div className="max-w-[900px] w-full">
-                            <h3 className={`text-[#5C1F1F] font-bold mb-6 md:mb-12 leading-none transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-5xl md:text-[100px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                SKILLS
-                            </h3>
-                            <div className={`grid gap-6 md:gap-8 transition-all duration-500 ${expandedSection === 'skills' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2'}`}>
-                                <div>
-                                    <p className={`text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>LANGUAGES</p>
-                                    <ul className={`text-[#5C1F1F] space-y-2 mt-4 font-medium transition-all duration-500 ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Java</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">C++</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">JavaScript</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">SQL</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">C / Dart</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <p className={`text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>FRAMEWORKS</p>
-                                    <ul className={`text-[#5C1F1F] space-y-2 mt-4 font-medium transition-all duration-500 ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">React.js / Next.js</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">SpringBoot</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Node.js</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Tailwind CSS</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Flutter</li>
-                                    </ul>
-                                </div>
-                                {expandedSection === 'skills' && (
-                                    <>
-                                        <div className="animate-fade-in">
-                                            <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">DATABASES</p>
-                                            <ul className="text-[#5C1F1F] space-y-2 mt-4 font-medium text-sm md:text-base">
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">PostgreSQL</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">MongoDB</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Firebase</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">MySQL / Supabase</li>
-                                            </ul>
-                                        </div>
-                                        <div className="animate-fade-in">
-                                            <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">TOOLS & PLATFORMS</p>
-                                            <ul className="text-[#5C1F1F] space-y-2 mt-4 font-medium text-sm md:text-base">
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Postman / Prisma</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Git & GitHub</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">IntelliJ / VSCode</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Figma</li>
-                                            </ul>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center p-6 md:p-12">
-                <div className="max-w-[1400px] w-full">
-                    <h3 className="text-white font-bold mb-8 md:mb-16 text-center leading-none text-5xl md:text-[100px] hover-lift" style={{fontFamily: 'serif'}}>
-                        PROJECTS
-                    </h3>
-                    <div className="space-y-4">
-                        {projects.map((project) => (
-                            <div key={project.id} className={`transition-all duration-500 ${expandedProject === project.id ? '' : expandedProject ? 'opacity-50 scale-95' : ''}`}>
-                                <div
-                                    className={`bg-[#E8DDD3] rounded-sm cursor-pointer transition-all duration-500 hover-card ${
-                                        expandedProject === project.id ? 'p-8 md:p-12' : 'p-6 md:p-8 hover:bg-[#D4C4B8]'
-                                    }`}
-                                    onClick={() => toggleProject(project.id)}
-                                >
-                                    {expandedProject === project.id ? (
-                                        <div className="animate-fade-in">
-                                            <div className="flex flex-col md:flex-row gap-8">
-                                                <div className="w-full md:w-1/3">
-                                                    <div className="aspect-video rounded-sm overflow-hidden shadow-xl hover-scale">
-                                                        <img
-                                                            src={project.image}
-                                                            alt={project.name}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h4 className="text-[#5C1F1F] font-bold text-3xl md:text-5xl mb-2" style={{fontFamily: 'serif'}}>{project.name}</h4>
-                                                    <p className="text-[#5C1F1F] text-lg md:text-xl mb-4 font-light">{project.subtitle}</p>
-                                                    <p className="text-[#5C1F1F] mb-6 text-sm md:text-base">{project.description}</p>
-                                                    <div className="mb-6">
-                                                        <h5 className="text-[#5C1F1F] font-bold mb-3">Key Features:</h5>
-                                                        <ul className="space-y-2 text-[#5C1F1F] text-sm md:text-base">
-                                                            {project.features.map((feature, idx) => (
-                                                                <li key={idx} className="hover:translate-x-2 transition-transform duration-300">• {feature}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                    <div className="flex flex-wrap gap-2 mb-6">
-                                                        {project.tech.map((tech) => (
-                                                            <span key={tech} className="bg-[#5C1F1F] text-white px-4 py-2 rounded-sm text-xs md:text-sm font-medium hover-lift">{tech}</span>
-                                                        ))}
-                                                    </div>
-                                                    <div className="flex gap-4">
-                                                        <a href={project.demo} target="_blank" rel="noopener noreferrer" className="bg-[#5C1F1F] text-white px-6 py-3 rounded-sm hover:bg-[#3A1010] transition-all duration-300 text-sm md:text-base font-medium hover-lift">
-                                                            Try It
-                                                        </a>
-                                                        <a href={project.github} target="_blank" rel="noopener noreferrer" className="bg-white text-[#5C1F1F] px-6 py-3 rounded-sm hover:bg-gray-100 transition-all duration-300 text-sm md:text-base font-medium hover-lift">
-                                                            GitHub
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex justify-between items-center">
-                                            <h4 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>{project.name}</h4>
-                                            <svg className="w-6 h-6 text-[#5C1F1F] transition-transform duration-300 hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className={`transition-all duration-500 ${expandedSection === 'achievements' || expandedSection === 'education' ? 'min-h-screen' : 'min-h-screen md:h-screen'} flex flex-col md:flex-row`}>
-                <div
-                    className={`transition-all duration-500 bg-[#C4A5A0] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'achievements' ? 'w-full' : expandedSection === 'education' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('achievements')}
-                >
-                    {expandedSection === 'education' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>ACHIEVEMENTS</h3>
-                        </div>
-                    ) : (
-                        <div className="max-w-[700px] w-full">
-                            <h3 className={`text-[#5C1F1F] font-bold mb-6 md:mb-12 leading-none transition-all duration-500 hover-lift ${expandedSection === 'achievements' ? 'text-5xl md:text-[90px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                ACHIEVEMENTS
-                            </h3>
-                            <div className="space-y-4 md:space-y-6">
-                                <div className="bg-[#5C1F1F] text-white p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-xl hover-card">
-                                    <h4 className="font-bold mb-3 text-lg md:text-xl">Competitive Programming</h4>
-                                    <p className="text-sm md:text-base">
-                                        <strong>1632 Rating</strong> on LeetCode<br/>
-                                        <strong>1048 Rating</strong> on CodeChef<br/>
-                                        Solved <strong>500+ DSA Problems</strong><br/>
-                                        <strong>300+ day streak</strong>
-                                    </p>
-                                </div>
-                                <div className="bg-[#E8DDD3] text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-xl hover-card">
-                                    <h4 className="font-bold mb-3 text-lg md:text-xl">Hackathons & Events</h4>
-                                    <p className="text-sm md:text-base">
-                                        <strong>Top 10 Team</strong> at Innovate X Hackathon<br/>
-                                        Among <strong>250+ teams</strong>
-                                    </p>
-                                </div>
-                                <div className="bg-white text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-xl hover-card">
-                                    <h4 className="font-bold mb-3 text-lg md:text-xl">Development Excellence</h4>
-                                    <p className="text-sm md:text-base">
-                                        Built <strong>2+ Production Apps</strong><br/>
-                                        Completed <strong>Flutter Training</strong><br/>
-                                        <strong>3 Professional Certificates</strong>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div
-                    className={`transition-all duration-500 bg-[#E8DDD3] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'education' ? 'w-full' : expandedSection === 'achievements' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('education')}
-                >
-                    {expandedSection === 'achievements' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>EDUCATION</h3>
-                        </div>
-                    ) : (
-                        <div className="max-w-[700px] w-full">
-                            <h3 className={`text-[#5C1F1F] font-bold mb-6 md:mb-12 leading-none transition-all duration-500 hover-lift ${expandedSection === 'education' ? 'text-5xl md:text-[90px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                EDUCATION
-                            </h3>
-                            <div className="grid gap-4 md:gap-6">
-                                <div className="bg-[#5C1F1F] text-white p-6 md:p-10 rounded-sm hover:scale-105 transition-transform shadow-2xl hover-card">
-                                    <p className="text-sm mb-4 opacity-70">2023 - Present</p>
-                                    <p className="text-base md:text-lg mb-2">
-                                        <strong>B.Tech - Computer Science</strong><br/>
-                                        Lovely Professional University
-                                    </p>
-                                    <p className="text-sm opacity-80">CGPA: 7.84</p>
-                                </div>
-                                {expandedSection === 'education' && (
-                                    <>
-                                        <div className="bg-white text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-2xl animate-fade-in hover-card">
-                                            <p className="text-sm mb-4 opacity-70">2022 - 2023</p>
-                                            <p className="text-base md:text-lg mb-2">
-                                                <strong>Senior Secondary (Intermediate)</strong><br/>
-                                                Shivalik Public School
-                                            </p>
-                                            <p className="text-sm opacity-80">73.2%</p>
-                                        </div>
-                                        <div className="bg-white text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-2xl animate-fade-in hover-card">
-                                            <p className="text-sm mb-4 opacity-70">2020 - 2021</p>
-                                            <p className="text-base md:text-lg mb-2">
-                                                <strong>Matriculation</strong><br/>
-                                                Shivalik Public School
-                                            </p>
-                                            <p className="text-sm opacity-80">87.2%</p>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className={`transition-all duration-500 ${expandedSection === 'certificates' || expandedSection === 'resume' ? 'min-h-screen' : 'min-h-screen md:h-screen'} flex flex-col md:flex-row`}>
-                <div
-                    className={`transition-all duration-500 bg-[#E8DDD3] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'certificates' ? 'w-full' : expandedSection === 'resume' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('certificates')}
-                >
-                    {expandedSection === 'resume' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>CERTIFICATES</h3>
-                        </div>
-                    ) : (
-                        <div className="w-full max-w-[1200px] mx-auto">
-                            <h3 className={`text-[#5C1F1F] font-bold mb-6 md:mb-12 leading-none transition-all duration-500 hover-lift ${expandedSection === 'certificates' ? 'text-5xl md:text-[100px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                CERTIFICATES
-                            </h3>
-                            <div
-                                className={`grid gap-12 justify-items-center transition-all duration-500
-                                ${
-                                    expandedSection === 'certificates'
-                                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                                        : 'grid-cols-2 md:grid-cols-3'
-                                }
-                            `}
+                    {/* Center: Quick Nav Links */}
+                    <nav className="hidden lg:flex items-center gap-1">
+                        {[
+                            { id: 'hero', label: '01 // OVERVIEW' },
+                            { id: 'about-skills', label: '02 // PROFILE' },
+                            { id: 'projects', label: '03 // WORKS' },
+                            { id: 'achievements-education', label: '04 // TROPHIES' },
+                            { id: 'certificates-resume', label: '05 // CERTS' },
+                            { id: 'contact', label: '06 // CONTACT' },
+                        ].map((item) => (
+                            <a
+                                key={item.id}
+                                href={`#${item.id}`}
+                                className={`px-2.5 py-1 transition-all rounded-none hover:text-white hover:bg-[#5C1F1F]/60 ${
+                                    activeSection === item.id ? 'text-[#FFE29A] bg-[#5C1F1F] font-bold' : 'text-[#C4A5A0]'
+                                }`}
                             >
+                                {item.label}
+                            </a>
+                        ))}
+                    </nav>
 
-                                {certificates.map((cert) => (
-                                    <div key={cert.id}>
-                                        <div
-                                            className={`transition-all duration-500 overflow-hidden shadow-xl bg-white hover-scale
-                                            ${
-                                                expandedSection === 'certificates'
-                                                    ?  'w-[260px] h-[260px] sm:w-[300px] sm:h-[300px]'
-                                                    : 'w-[200px] h-[200px] md:w-[240px] md:h-[240px]'
-                                            }
-                                       `}
-                                        >
-                                            <img
-                                                src={cert.image}
-                                                alt={cert.title}
-                                                className="w-full h-full object-contain p-3"
-                                            />
-                                        </div>
+                    {/* Right: Controls (Disco Lights + Sound) */}
+                    <div className="flex items-center gap-2">
+                        {/* Disco Light Mode Button */}
+                        <button
+                            onClick={cycleDiscoMode}
+                            title="Toggle Disco Lights fx"
+                            className="flex items-center gap-1.5 px-3 py-1 bg-[#5C1F1F] hover:bg-[#8B6B6B] border border-[#C4A5A0]/40 text-[#FFE29A] transition-all rounded-none block-shadow-sm active:translate-y-0.5 cursor-pointer"
+                        >
+                            <Disc className={`w-3.5 h-3.5 ${discoMode !== 'off' ? 'animate-spin' : ''}`} style={{ animationDuration: '4s' }} />
+                            <span className="font-bold tracking-wider">
+                                {discoMode === 'disco' ? 'DISCO: ON' : discoMode === 'luxe' ? 'LUXE GLOW' : 'LIGHTS: OFF'}
+                            </span>
+                        </button>
 
-                                        {expandedSection === 'certificates' && (
-                                            <div className="mt-3 text-center animate-fade-in">
-                                                <p className="text-[#5C1F1F] font-bold text-sm">{cert.title}</p>
-                                                <p className="text-[#5C1F1F] text-xs opacity-70 mt-1">{cert.issuer} - {cert.date}</p>
-                                                <a href={cert.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[#5C1F1F] text-xs underline hover:text-[#3A1010] transition-colors duration-300">
-                                                    Verify →
-                                                </a>
-                                            </div>
-                                        )}
+                        {/* Sound Toggle */}
+                        <button
+                            onClick={toggleSound}
+                            title={soundEnabled ? 'Mute micro-audio' : 'Enable audio feedback'}
+                            className="p-1.5 bg-[#3A1010] hover:bg-[#5C1F1F] border border-[#C4A5A0]/40 text-[#E8DDD3] transition-all block-shadow-sm cursor-pointer"
+                        >
+                            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-[#FFE29A]" /> : <VolumeX className="w-3.5 h-3.5 text-[#C4A5A0]/60" />}
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 1: HERO OVERVIEW
+            ═══════════════════════════════════════════════════════════ */}
+            <section
+                id="hero"
+                className="relative min-h-screen flex items-center justify-center pt-24 pb-16 px-6 sm:px-10 lg:px-16 overflow-hidden bg-grid-pattern bg-stripes"
+            >
+                {/* Geometric ambient lighting discs in hero */}
+                <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#8B6B6B] rounded-full blur-[140px] opacity-30 pointer-events-none animate-pulse"></div>
+                <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#C4A5A0] rounded-full blur-[160px] opacity-25 pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+                <div className="max-w-[1360px] w-full mx-auto relative z-10">
+                    {/* Top Index HUD Coordinate Box */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-8 pb-4 border-b border-[#C4A5A0]/30 font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 01</span>
+                            <span className="text-[#E8DDD3] tracking-widest">// SOFTWARE ENGINEERING & PRODUCT LAB</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[#C4A5A0]">
+                            <span className="flex items-center gap-1">
+                                <Flame className="w-3.5 h-3.5 text-[#FFE29A]" /> 500+ DSA SOLVED
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                                <Star className="w-3.5 h-3.5 text-[#FFE29A]" /> 300+ DAY STREAK
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                        {/* Left Column: Bold Editorial Typography & Pitch */}
+                        <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#2A1212]/80 border border-[#C4A5A0]/40 rounded-none text-xs font-mono-tech tracking-wider text-[#FFE29A] block-shadow-sm">
+                                <Sparkles className="w-3.5 h-3.5 text-[#FFE29A] animate-spin" style={{ animationDuration: '6s' }} />
+                                <span>B.TECH CSE @ LPU (CGPA 7.84)</span>
+                                <span className="text-[#C4A5A0]">✦ FULL STACK & FLUTTER</span>
+                            </div>
+
+                            <div className="space-y-1">
+                                <h1
+                                    className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[104px] font-black tracking-tight leading-[0.92] uppercase"
+                                    style={{ fontFamily: 'Playfair Display, Georgia, serif' }}
+                                >
+                                    KHUSHI
+                                    <span className="block text-[#E8DDD3] italic font-normal tracking-wide">
+                                        DHIR
+                                    </span>
+                                </h1>
+                            </div>
+
+                            <p className="text-[#E8DDD3] text-base sm:text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                                Computer Science engineer with high algorithmic rigor and an eye for high-impact user experiences. Architecting reactive web platforms, mobile solutions, and scalable systems with modern frameworks.
+                            </p>
+
+                            {/* Blocky Quick Metric Cards */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono-tech">
+                                {[
+                                    { value: '1632', label: 'LEETCODE RATING', sub: 'Knight Contender' },
+                                    { value: '500+', label: 'DSA PROBLEMS', sub: 'Solved across platforms' },
+                                    { value: '300+', label: 'DAY STREAK', sub: 'Consistent coder' },
+                                    { value: '7.84', label: 'B.TECH CGPA', sub: 'CS & Engineering' },
+                                ].map((stat, i) => (
+                                    <div
+                                        key={i}
+                                        className="p-3 bg-[#3A1010]/80 border-2 border-[#8B6B6B] rounded-none block-shadow-sm hover:border-[#FFE29A] transition-colors"
+                                    >
+                                        <div className="text-xl sm:text-2xl font-bold text-[#FFE29A] font-syne">{stat.value}</div>
+                                        <div className="text-[10px] sm:text-xs font-bold text-white tracking-wider mt-0.5">{stat.label}</div>
+                                        <div className="text-[9px] text-[#C4A5A0] truncate">{stat.sub}</div>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    )}
-                </div>
 
-                <div
-                    className={`transition-all duration-500 bg-[#C4A5A0] flex items-center justify-center p-6 md:p-12 cursor-pointer hover-bg-shift ${
-                        expandedSection === 'resume' ? 'w-full' : expandedSection === 'certificates' ? 'w-0 md:w-16 overflow-hidden' : 'w-full md:w-1/2'
-                    }`}
-                    onClick={() => toggleSection('resume')}
-                >
-                    {expandedSection === 'certificates' ? (
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                            <h3 className="text-[#5C1F1F] font-bold text-2xl md:text-4xl" style={{fontFamily: 'serif'}}>RESUME</h3>
+                            {/* Call to Actions & Social Links */}
+                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-4">
+                                <a
+                                    href="#projects"
+                                    className="px-6 py-3.5 bg-[#E8DDD3] text-[#5C1F1F] font-bold text-sm tracking-wider uppercase rounded-none block-shadow hover:bg-white transition-all hover-press flex items-center gap-2"
+                                >
+                                    <FolderGit2 className="w-4 h-4" />
+                                    EXPLORE PROJECTS
+                                    <ArrowDown className="w-4 h-4" />
+                                </a>
+
+                                <a
+                                    href="#contact"
+                                    className="px-6 py-3.5 bg-[#2A1212] text-white border-2 border-[#C4A5A0] font-bold text-sm tracking-wider uppercase rounded-none block-shadow hover:bg-[#3A1010] transition-all hover-press flex items-center gap-2"
+                                >
+                                    <Mail className="w-4 h-4 text-[#FFE29A]" />
+                                    GET IN TOUCH
+                                </a>
+
+                                <button
+                                    onClick={copyEmailToClipboard}
+                                    title="Copy email to clipboard"
+                                    className="px-4 py-3.5 bg-[#3A1010] text-[#E8DDD3] border border-[#8B6B6B] text-xs font-mono-tech rounded-none block-shadow-sm hover:bg-[#5C1F1F] transition-all flex items-center gap-2 cursor-pointer"
+                                >
+                                    {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                                    <span>{copiedEmail ? 'COPIED!' : 'COPY EMAIL'}</span>
+                                </button>
+                            </div>
+
+                            {/* Social Badges */}
+                            <div className="flex items-center justify-center lg:justify-start gap-4 pt-2 text-xs font-mono-tech text-[#C4A5A0]">
+                                <a
+                                    href="https://www.linkedin.com/in/khushidhir3/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-white transition-colors flex items-center gap-1.5"
+                                >
+                                    <Linkedin className="w-3.5 h-3.5 text-[#FFE29A]" />
+                                    <span>linkedin.com/in/khushidhir3</span>
+                                </a>
+                                <span>•</span>
+                                <a
+                                    href="https://github.com/khushidhir3"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-white transition-colors flex items-center gap-1.5"
+                                >
+                                    <Github className="w-3.5 h-3.5 text-[#FFE29A]" />
+                                    <span>github.com/khushidhir3</span>
+                                </a>
+                            </div>
                         </div>
-                    ) : (
-                        <div className="max-w-[700px] w-full">
-                            <h3 className={`text-[#5C1F1F] font-bold mb-6 md:mb-12 leading-none transition-all duration-500 hover-lift ${expandedSection === 'resume' ? 'text-5xl md:text-[100px]' : 'text-4xl md:text-6xl'}`} style={{fontFamily: 'serif'}}>
-                                RESUME
-                            </h3>
-                            <div className="flex flex-col items-center">
-                                <div className="w-full max-w-md aspect-[11/11] bg-white rounded-sm shadow-2xl mb-6 overflow-hidden hover-scale">
-                                    <div className="w-full h-full flex items-center justify-center text-[#5C1F1F] text-sm">
-                                        <img src={resumePreview} alt="ResumePreview" />
+
+                        {/* Right Column: High-Impact Framed Portrait with Disco Corners */}
+                        <div className="lg:col-span-5 flex justify-center">
+                            <TiltCard
+                                maxTilt={10}
+                                className="w-full max-w-[380px] sm:max-w-[420px] bg-[#3A1010] border-4 border-[#E8DDD3] p-3 block-shadow-lg disco-card-border"
+                            >
+                                {/* Corner Cyber Accents */}
+                                <div className="absolute top-1 left-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">┌ [+]</div>
+                                <div className="absolute top-1 right-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">[+] ┐</div>
+                                <div className="absolute bottom-1 left-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">└ [+]</div>
+                                <div className="absolute bottom-1 right-1 text-[#FFE29A] text-[10px] font-mono-tech z-20">[+] ┘</div>
+
+                                {/* Portrait Container */}
+                                <div className="relative w-full aspect-[4/5] overflow-hidden bg-gradient-to-b from-[#8B6B6B] to-[#2A1212] border-2 border-[#5C1F1F]">
+                                    <img
+                                        src={profile}
+                                        alt="Khushi Dhir"
+                                        className="w-full h-full object-cover object-[center_28%] transition-transform duration-700 hover:scale-105"
+                                    />
+                                    
+                                    {/* Scanline / Shimmer overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#2A1212] via-transparent to-transparent opacity-80 pointer-events-none"></div>
+
+                                    {/* Live Status Badge overlay */}
+                                    <div className="absolute bottom-4 left-4 right-4 bg-[#2A1212]/95 border border-[#FFE29A]/40 p-3 text-left font-mono-tech block-shadow-sm">
+                                        <div className="flex items-center justify-between text-xs text-[#FFE29A] font-bold mb-1">
+                                            <span>PORTFOLIO SPEC v2026.1</span>
+                                            <span className="flex items-center gap-1">
+                                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                                READY
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] text-[#E8DDD3] leading-tight">
+                                            Building cutting-edge applications with Flutter, React, SpringBoot & Node.js.
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="flex flex-col sm:flex-row gap-4">
+                            </TiltCard>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                INFINITE MARQUEE TICKER 1
+            ═══════════════════════════════════════════════════════════ */}
+            <div className="relative bg-[#2A1212] border-y-2 border-[#8B6B6B] py-3 overflow-hidden text-xs font-mono-tech tracking-widest text-[#E8DDD3] select-none">
+                <div className="animate-marquee flex items-center gap-6 whitespace-nowrap">
+                    {[
+                        '✦ FULL-STACK ARCHITECTURE',
+                        '■ FLUTTER & DART EXPERT',
+                        '▲ REACT & NEXT.JS ECOSYSTEM',
+                        '◆ SPRINGBOOT & NODE.JS',
+                        '✦ POSTGRESQL & MONGODB',
+                        '■ LEETCODE 1632 RATING',
+                        '▲ 500+ DSA PROBLEMS SOLVED',
+                        '◆ TOP 10 HACKATHON FINALIST',
+                        '✦ LARAVEL ECHO & WEBSOCKETS',
+                        '■ RESTFUL API DESIGN',
+                    ].concat([
+                        '✦ FULL-STACK ARCHITECTURE',
+                        '■ FLUTTER & DART EXPERT',
+                        '▲ REACT & NEXT.JS ECOSYSTEM',
+                        '◆ SPRINGBOOT & NODE.JS',
+                        '✦ POSTGRESQL & MONGODB',
+                        '■ LEETCODE 1632 RATING',
+                        '▲ 500+ DSA PROBLEMS SOLVED',
+                        '◆ TOP 10 HACKATHON FINALIST',
+                        '✦ LARAVEL ECHO & WEBSOCKETS',
+                        '■ RESTFUL API DESIGN',
+                    ]).map((item, idx) => (
+                        <span key={idx} className="flex items-center gap-6">
+                            <span className="hover:text-[#FFE29A] transition-colors">{item}</span>
+                            <span className="text-[#C4A5A0]">/</span>
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 2: ABOUT & SKILLS SPLIT INTERACTIVE STAGE
+            ═══════════════════════════════════════════════════════════ */}
+            <section id="about-skills" className="relative min-h-screen py-20 px-6 sm:px-10 lg:px-16 bg-[#A67B7B]/20">
+                <div className="max-w-[1400px] mx-auto">
+                    {/* Section Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-[#5C1F1F] text-[#FFE29A] font-bold">SEC 02</span>
+                            <span className="text-white font-bold text-sm tracking-wider">// PROFILE & TECHNICAL ARSENAL</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => toggleSection('about')}
+                                className={`px-3 py-1 border transition-all rounded-none block-shadow-sm ${
+                                    expandedSection === 'about' ? 'bg-[#5C1F1F] text-[#FFE29A] border-[#FFE29A]' : 'bg-[#2A1212] text-[#E8DDD3] border-[#8B6B6B]'
+                                }`}
+                            >
+                                FOCUS: ABOUT
+                            </button>
+                            <button
+                                onClick={() => toggleSection('skills')}
+                                className={`px-3 py-1 border transition-all rounded-none block-shadow-sm ${
+                                    expandedSection === 'skills' ? 'bg-[#5C1F1F] text-[#FFE29A] border-[#FFE29A]' : 'bg-[#2A1212] text-[#E8DDD3] border-[#8B6B6B]'
+                                }`}
+                            >
+                                FOCUS: SKILLS
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Dual Blocky Cards Container */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        {/* ── ABOUT ME CARD ── */}
+                        <div
+                            className={`transition-all duration-500 bg-[#E8DDD3] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg ${
+                                expandedSection === 'about' ? 'lg:col-span-7' : expandedSection === 'skills' ? 'lg:col-span-4' : 'lg:col-span-6'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 01.0 // ABOUT BIOGRAPHY ]</span>
+                                <span className="bg-[#5C1F1F] text-white px-2 py-0.5 font-bold">B.TECH CSE</span>
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-6 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                ABOUT<br />ME
+                            </h3>
+
+                            <div className="space-y-4 text-sm sm:text-base leading-relaxed text-[#3A1010]">
+                                <p className="font-medium text-lg text-[#5C1F1F]">
+                                    Computer Science & Engineering student at Lovely Professional University (CGPA 7.84) with a strong foundation in algorithmic problem solving and software architecture.
+                                </p>
+
+                                <p>
+                                    Specialized in Mobile Application Development using Flutter and hands-on full-stack web engineering. Driven by the craft of writing scalable code and shipping intuitive, user-centric digital products that solve real-world problems.
+                                </p>
+
+                                <div className="p-4 bg-white/70 border-2 border-[#5C1F1F] font-mono-tech text-xs space-y-2 mt-4 block-shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[#5C1F1F] font-bold">EDUCATION:</span>
+                                        <span className="text-[#2A1212]">B.Tech in Computer Science</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[#5C1F1F] font-bold">INSTITUTION:</span>
+                                        <span className="text-[#2A1212]">Lovely Professional University</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[#5C1F1F] font-bold">ACADEMIC CGPA:</span>
+                                        <span className="text-[#5C1F1F] font-bold bg-[#E8DDD3] px-2 py-0.5">7.84 / 10.0</span>
+                                    </div>
+                                </div>
+
+                                {expandedSection === 'about' && (
+                                    <div className="mt-6 pt-6 border-t-2 border-[#5C1F1F]/20 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                                        <div className="space-y-3 text-sm">
+                                            <h4 className="font-bold text-[#5C1F1F] font-mono-tech text-xs tracking-wider">ENGINEERING PILLARS:</h4>
+                                            <ul className="space-y-1.5 text-xs text-[#5C1F1F] font-medium font-mono-tech">
+                                                <li>✓ High-Performance Web & Mobile Apps</li>
+                                                <li>✓ Distributed State & WebSockets</li>
+                                                <li>✓ Relational & NoSQL Database Schema Design</li>
+                                                <li>✓ Continuous Algorithmic Problem Solving</li>
+                                            </ul>
+                                        </div>
+                                        <div className="aspect-square bg-gradient-to-br from-[#8B6B6B] to-[#5C1F1F] border-2 border-[#2A1212] overflow-hidden block-shadow-sm">
+                                            <img src={about} alt="About Khushi" className="w-full h-full object-cover object-center" />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* ── SKILLS CARD ── */}
+                        <div
+                            className={`transition-all duration-500 bg-[#C4A5A0] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg ${
+                                expandedSection === 'skills' ? 'lg:col-span-8' : expandedSection === 'about' ? 'lg:col-span-5' : 'lg:col-span-6'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 01.1 // TECHNICAL STACK ]</span>
+                                <span className="bg-[#5C1F1F] text-white px-2 py-0.5 font-bold">4 STACKS</span>
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-6 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                SKILLS &<br />STACK
+                            </h3>
+
+                            {/* Category Filter Tabs */}
+                            <div className="flex flex-wrap gap-2 mb-6 font-mono-tech text-xs">
+                                {[
+                                    { id: 'all', label: 'ALL' },
+                                    { id: 'languages', label: 'LANGUAGES' },
+                                    { id: 'frameworks', label: 'FRAMEWORKS' },
+                                    { id: 'databases', label: 'DATABASES' },
+                                    { id: 'tools', label: 'TOOLS' },
+                                ].map((cat) => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => {
+                                            if (soundEnabled) soundFX.playPop(500);
+                                            setActiveSkillCategory(cat.id);
+                                        }}
+                                        className={`px-3 py-1 border border-[#5C1F1F] font-bold rounded-none block-shadow-sm transition-all cursor-pointer ${
+                                            activeSkillCategory === cat.id
+                                                ? 'bg-[#5C1F1F] text-[#FFE29A]'
+                                                : 'bg-white/80 text-[#5C1F1F] hover:bg-white'
+                                        }`}
+                                    >
+                                        {cat.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Skills Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {filteredSkills.map((category) => {
+                                    const Icon = category.icon;
+                                    return (
+                                        <div
+                                            key={category.id}
+                                            className="bg-white/90 p-4 border-2 border-[#5C1F1F] block-shadow-sm"
+                                        >
+                                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#5C1F1F]/20 text-[#5C1F1F] font-mono-tech text-xs font-bold">
+                                                <Icon className="w-4 h-4 text-[#5C1F1F]" />
+                                                <span>{category.name.toUpperCase()}</span>
+                                            </div>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {category.skills.map((skill) => (
+                                                    <span
+                                                        key={skill}
+                                                        className="px-2.5 py-1 bg-[#5C1F1F] text-white font-mono-tech text-xs font-medium rounded-none hover:bg-[#2A1212] transition-colors"
+                                                    >
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 3: FEATURED PROJECTS
+            ═══════════════════════════════════════════════════════════ */}
+            <section id="projects" className="relative min-h-screen py-24 px-6 sm:px-10 lg:px-16 bg-[#5C1F1F] bg-grid-pattern">
+                <div className="max-w-[1400px] mx-auto relative z-10">
+                    {/* Section Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 03</span>
+                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// PRODUCTION & ENGINEERING ARCHIVES</span>
+                        </div>
+                        <span className="text-[#FFE29A] font-bold">[ 06 TOTAL PROJECTS ]</span>
+                    </div>
+
+                    <div className="text-center mb-12">
+                        <h2
+                            className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight"
+                            style={{ fontFamily: 'Playfair Display, serif' }}
+                        >
+                            PROJECTS
+                        </h2>
+                        <p className="text-[#E8DDD3] font-mono-tech text-xs sm:text-sm tracking-widest mt-2 uppercase">
+                            Real-World Applications ✦ Live Workflows ✦ Production Architecture
+                        </p>
+
+                        {/* Project Category Filter Tabs */}
+                        <div className="flex flex-wrap justify-center gap-2 mt-8 font-mono-tech text-xs">
+                            {[
+                                { id: 'all', label: 'ALL ARCHIVES (6)' },
+                                { id: 'fullstack', label: 'FULL STACK (2)' },
+                                { id: 'mobile', label: 'MOBILE APPS (1)' },
+                                { id: 'web', label: 'WEB PLATFORMS (3)' },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => {
+                                        if (soundEnabled) soundFX.playPop(560);
+                                        setProjectFilter(tab.id);
+                                    }}
+                                    className={`px-4 py-2 border-2 transition-all rounded-none block-shadow-sm cursor-pointer ${
+                                        projectFilter === tab.id
+                                            ? 'bg-[#E8DDD3] text-[#5C1F1F] border-[#E8DDD3] font-bold'
+                                            : 'bg-[#2A1212] text-[#E8DDD3] border-[#8B6B6B] hover:border-[#FFE29A]'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Project Cards Stack */}
+                    <div className="space-y-6">
+                        {filteredProjects.map((project, idx) => {
+                            const isExpanded = expandedProject === project.id;
+                            return (
+                                <TiltCard
+                                    key={project.id}
+                                    maxTilt={isExpanded ? 2 : 4}
+                                    scale={isExpanded ? 1 : 1.01}
+                                    className={`transition-all duration-500 bg-[#E8DDD3] text-[#3A1010] border-4 border-[#2A1212] block-shadow-lg ${
+                                        isExpanded ? 'ring-4 ring-[#FFE29A]/50' : 'hover:border-[#FFE29A]'
+                                    }`}
+                                >
+                                    {/* Card Top Technical Header */}
+                                    <div
+                                        onClick={() => toggleProject(project.id)}
+                                        className="p-5 sm:p-7 flex flex-wrap items-center justify-between gap-4 cursor-pointer border-b-2 border-[#5C1F1F]/15 bg-gradient-to-r from-[#E8DDD3] to-[#DFD0C4]"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <span className="w-9 h-9 bg-[#5C1F1F] text-[#FFE29A] font-mono-tech font-bold text-sm flex items-center justify-center block-shadow-sm">
+                                                0{idx + 1}
+                                            </span>
+                                            <div>
+                                                <h3
+                                                    className="text-2xl sm:text-4xl font-black text-[#5C1F1F] uppercase tracking-wide"
+                                                    style={{ fontFamily: 'Playfair Display, serif' }}
+                                                >
+                                                    {project.name}
+                                                </h3>
+                                                <p className="text-xs sm:text-sm text-[#5C1F1F]/80 font-mono-tech">
+                                                    {project.subtitle}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <span className="hidden sm:inline-block px-3 py-1 bg-[#5C1F1F] text-white font-mono-tech text-xs font-bold">
+                                                {project.tag}
+                                            </span>
+                                            <div className="p-2 bg-[#5C1F1F] text-white block-shadow-sm transition-transform duration-300">
+                                                {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Expanded Deep Dive Content */}
+                                    {isExpanded && (
+                                        <div className="p-6 sm:p-10 border-t border-[#5C1F1F]/20 animate-fade-in">
+                                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                                                {/* Left: Project Screenshot Preview */}
+                                                <div className="lg:col-span-5">
+                                                    <div className="relative aspect-video sm:aspect-[16/10] bg-[#2A1212] border-4 border-[#5C1F1F] overflow-hidden block-shadow">
+                                                        <img
+                                                            src={project.image}
+                                                            alt={project.name}
+                                                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                                        />
+                                                        <div className="absolute top-2 left-2 bg-[#2A1212]/90 text-[#FFE29A] px-2 py-0.5 font-mono-tech text-[10px] font-bold border border-[#FFE29A]/40">
+                                                            LIVE DEMO READY
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Tech Stack Pills */}
+                                                    <div className="mt-4 pt-4 border-t border-[#5C1F1F]/20">
+                                                        <div className="text-xs font-mono-tech font-bold text-[#5C1F1F] mb-2">
+                                                            TECHNOLOGY ARCHITECTURE:
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-1.5">
+                                                            {project.tech.map((t) => (
+                                                                <span
+                                                                    key={t}
+                                                                    className="px-2.5 py-1 bg-[#5C1F1F] text-white font-mono-tech text-xs font-semibold rounded-none block-shadow-sm hover:bg-[#3A1010] transition-colors"
+                                                                >
+                                                                    {t}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Right: Detailed Description & Features */}
+                                                <div className="lg:col-span-7 space-y-5">
+                                                    <div>
+                                                        <h4 className="text-xs font-mono-tech font-bold text-[#5C1F1F] tracking-wider uppercase mb-1">
+                                                            PROJECT OVERVIEW:
+                                                        </h4>
+                                                        <p className="text-sm sm:text-base text-[#3A1010] leading-relaxed">
+                                                            {project.description}
+                                                        </p>
+                                                    </div>
+
+                                                    <div>
+                                                        <h4 className="text-xs font-mono-tech font-bold text-[#5C1F1F] tracking-wider uppercase mb-2">
+                                                            KEY ENGINEERING HIGHLIGHTS:
+                                                        </h4>
+                                                        <ul className="space-y-2 font-mono-tech text-xs sm:text-sm text-[#3A1010]">
+                                                            {project.features.map((feature, fIdx) => (
+                                                                <li key={fIdx} className="flex items-start gap-2 bg-white/70 p-2.5 border-l-4 border-[#5C1F1F]">
+                                                                    <span className="text-[#5C1F1F] font-bold mt-0.5">✦</span>
+                                                                    <span>{feature}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+
+                                                    {/* Action Buttons */}
+                                                    <div className="flex flex-wrap gap-3 pt-3">
+                                                        <a
+                                                            href={project.demo}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="px-6 py-3 bg-[#5C1F1F] text-white font-mono-tech text-xs sm:text-sm font-bold tracking-wider uppercase rounded-none block-shadow hover:bg-[#3A1010] transition-all hover-press flex items-center gap-2"
+                                                        >
+                                                            <ExternalLink className="w-4 h-4 text-[#FFE29A]" />
+                                                            TRY APPLICATION
+                                                        </a>
+
+                                                        <a
+                                                            href={project.github}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="px-6 py-3 bg-white text-[#5C1F1F] border-2 border-[#5C1F1F] font-mono-tech text-xs sm:text-sm font-bold tracking-wider uppercase rounded-none block-shadow hover:bg-[#FAF7F2] transition-all hover-press flex items-center gap-2"
+                                                        >
+                                                            <Github className="w-4 h-4" />
+                                                            SOURCE REPOSITORY
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </TiltCard>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                INFINITE MARQUEE TICKER 2 (REVERSE)
+            ═══════════════════════════════════════════════════════════ */}
+            <div className="relative bg-[#2A1212] border-y-2 border-[#8B6B6B] py-3 overflow-hidden text-xs font-mono-tech tracking-widest text-[#E8DDD3] select-none">
+                <div className="animate-marquee-reverse flex items-center gap-6 whitespace-nowrap">
+                    {[
+                        '✦ CODECHEF 1048 RATING',
+                        '■ FLUTTER CERTIFIED EXPERT',
+                        '▲ OBJECT ORIENTED DESIGN',
+                        '◆ PRISMA & SUPABASE',
+                        '✦ RESTFUL API DEVELOPMENT',
+                        '■ 1632 LEETCODE MILESTONE',
+                        '▲ INNOVATE X TOP 10 FINALIST',
+                        '◆ AUTOMATA & COMPUTATION THEORY',
+                    ].concat([
+                        '✦ CODECHEF 1048 RATING',
+                        '■ FLUTTER CERTIFIED EXPERT',
+                        '▲ OBJECT ORIENTED DESIGN',
+                        '◆ PRISMA & SUPABASE',
+                        '✦ RESTFUL API DEVELOPMENT',
+                        '■ 1632 LEETCODE MILESTONE',
+                        '▲ INNOVATE X TOP 10 FINALIST',
+                        '◆ AUTOMATA & COMPUTATION THEORY',
+                    ]).map((item, idx) => (
+                        <span key={idx} className="flex items-center gap-6">
+                            <span className="hover:text-[#FFE29A] transition-colors">{item}</span>
+                            <span className="text-[#C4A5A0]">/</span>
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 4: ACHIEVEMENTS & EDUCATION
+            ═══════════════════════════════════════════════════════════ */}
+            <section id="achievements-education" className="relative min-h-screen py-24 px-6 sm:px-10 lg:px-16 bg-[#C4A5A0]/25">
+                <div className="max-w-[1400px] mx-auto">
+                    {/* Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-[#5C1F1F] text-[#FFE29A] font-bold">SEC 04</span>
+                            <span className="text-white font-bold text-sm tracking-wider">// MILESTONES & ACADEMIC PATH</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => toggleSection('achievements')}
+                                className={`px-3 py-1 border transition-all rounded-none block-shadow-sm ${
+                                    expandedSection === 'achievements' ? 'bg-[#5C1F1F] text-[#FFE29A] border-[#FFE29A]' : 'bg-[#2A1212] text-[#E8DDD3] border-[#8B6B6B]'
+                                }`}
+                            >
+                                ACHIEVEMENTS
+                            </button>
+                            <button
+                                onClick={() => toggleSection('education')}
+                                className={`px-3 py-1 border transition-all rounded-none block-shadow-sm ${
+                                    expandedSection === 'education' ? 'bg-[#5C1F1F] text-[#FFE29A] border-[#FFE29A]' : 'bg-[#2A1212] text-[#E8DDD3] border-[#8B6B6B]'
+                                }`}
+                            >
+                                EDUCATION
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        {/* ── ACHIEVEMENTS BLOCK ── */}
+                        <div
+                            className={`transition-all duration-500 bg-[#C4A5A0] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg ${
+                                expandedSection === 'achievements' ? 'lg:col-span-7' : expandedSection === 'education' ? 'lg:col-span-5' : 'lg:col-span-6'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 04.0 // COMPETITIVE & AWARDS ]</span>
+                                <Trophy className="w-4 h-4 text-[#5C1F1F]" />
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-8 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                ACHIEVE<br />MENTS
+                            </h3>
+
+                            <div className="space-y-4 font-mono-tech">
+                                {/* CP Card */}
+                                <TiltCard maxTilt={5} className="bg-[#5C1F1F] text-white p-6 border-2 border-[#2A1212] block-shadow">
+                                    <div className="flex items-center justify-between mb-3 text-xs text-[#FFE29A]">
+                                        <span className="font-bold">COMPETITIVE PROGRAMMING</span>
+                                        <Zap className="w-4 h-4" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3 text-xs">
+                                        <div className="p-2.5 bg-[#3A1010]">
+                                            <div className="text-[#FFE29A] text-xl font-bold font-syne">1632</div>
+                                            <div className="text-[10px] text-[#C4A5A0]">LeetCode Rating</div>
+                                        </div>
+                                        <div className="p-2.5 bg-[#3A1010]">
+                                            <div className="text-[#FFE29A] text-xl font-bold font-syne">1048</div>
+                                            <div className="text-[10px] text-[#C4A5A0]">CodeChef Rating</div>
+                                        </div>
+                                        <div className="p-2.5 bg-[#3A1010]">
+                                            <div className="text-white text-xl font-bold font-syne">500+</div>
+                                            <div className="text-[10px] text-[#C4A5A0]">DSA Problems</div>
+                                        </div>
+                                        <div className="p-2.5 bg-[#3A1010]">
+                                            <div className="text-white text-xl font-bold font-syne">300+</div>
+                                            <div className="text-[10px] text-[#C4A5A0]">Day Streak</div>
+                                        </div>
+                                    </div>
+                                </TiltCard>
+
+                                {/* Hackathon Card */}
+                                <TiltCard maxTilt={5} className="bg-[#E8DDD3] text-[#3A1010] p-6 border-2 border-[#5C1F1F] block-shadow">
+                                    <div className="flex items-center justify-between mb-2 text-xs text-[#5C1F1F] font-bold">
+                                        <span>HACKATHONS & COMPETITIONS</span>
+                                        <Award className="w-4 h-4" />
+                                    </div>
+                                    <div className="text-lg font-bold text-[#5C1F1F] mb-1">
+                                        Top 10 Team — Innovate X Hackathon
+                                    </div>
+                                    <p className="text-xs text-[#5C1F1F]/80">
+                                        Selected in the Top 10 finalists out of 250+ competing engineering teams.
+                                    </p>
+                                </TiltCard>
+
+                                {/* Dev Excellence Card */}
+                                <TiltCard maxTilt={5} className="bg-white text-[#3A1010] p-6 border-2 border-[#5C1F1F] block-shadow">
+                                    <div className="flex items-center justify-between mb-2 text-xs text-[#5C1F1F] font-bold">
+                                        <span>DEVELOPMENT EXCELLENCE</span>
+                                        <Code className="w-4 h-4" />
+                                    </div>
+                                    <ul className="space-y-1.5 text-xs text-[#5C1F1F] font-medium">
+                                        <li>✦ Built & deployed 2+ Production Grade Platforms</li>
+                                        <li>✦ Specialized Flutter Mobile Development Program</li>
+                                        <li>✦ 6 Professional Engineering Certifications</li>
+                                    </ul>
+                                </TiltCard>
+                            </div>
+                        </div>
+
+                        {/* ── EDUCATION BLOCK ── */}
+                        <div
+                            className={`transition-all duration-500 bg-[#E8DDD3] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg ${
+                                expandedSection === 'education' ? 'lg:col-span-7' : expandedSection === 'achievements' ? 'lg:col-span-5' : 'lg:col-span-6'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 04.1 // ACADEMIC RECORD ]</span>
+                                <GraduationCap className="w-4 h-4 text-[#5C1F1F]" />
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-8 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                EDUCA<br />TION
+                            </h3>
+
+                            <div className="space-y-4 font-mono-tech">
+                                {/* B.Tech */}
+                                <TiltCard maxTilt={5} className="bg-[#5C1F1F] text-white p-6 border-2 border-[#2A1212] block-shadow">
+                                    <div className="flex items-center justify-between text-xs text-[#FFE29A] mb-2 font-bold">
+                                        <span>2023 — PRESENT</span>
+                                        <span className="bg-[#FFE29A] text-[#5C1F1F] px-2 py-0.5">CURRENT DEGREE</span>
+                                    </div>
+                                    <h4 className="text-lg font-bold text-white mb-1">
+                                        B.Tech in Computer Science & Engineering
+                                    </h4>
+                                    <p className="text-xs text-[#E8DDD3] mb-3">
+                                        Lovely Professional University, Punjab
+                                    </p>
+                                    <div className="inline-block px-3 py-1 bg-[#3A1010] border border-[#FFE29A]/40 text-xs font-bold text-[#FFE29A]">
+                                        CGPA: 7.84 / 10.0
+                                    </div>
+                                </TiltCard>
+
+                                {/* Intermediate */}
+                                <TiltCard maxTilt={5} className="bg-white text-[#3A1010] p-6 border-2 border-[#5C1F1F] block-shadow">
+                                    <div className="flex items-center justify-between text-xs text-[#5C1F1F] mb-2 font-bold">
+                                        <span>2022 — 2023</span>
+                                        <span className="bg-[#E8DDD3] text-[#5C1F1F] px-2 py-0.5">SENIOR SECONDARY</span>
+                                    </div>
+                                    <h4 className="text-base font-bold text-[#5C1F1F] mb-1">
+                                        Senior Secondary (Intermediate)
+                                    </h4>
+                                    <p className="text-xs text-[#5C1F1F]/80 mb-3">
+                                        Shivalik Public School
+                                    </p>
+                                    <div className="inline-block px-3 py-1 bg-[#E8DDD3] text-xs font-bold text-[#5C1F1F]">
+                                        Score: 73.2%
+                                    </div>
+                                </TiltCard>
+
+                                {/* Matriculation */}
+                                <TiltCard maxTilt={5} className="bg-white text-[#3A1010] p-6 border-2 border-[#5C1F1F] block-shadow">
+                                    <div className="flex items-center justify-between text-xs text-[#5C1F1F] mb-2 font-bold">
+                                        <span>2020 — 2021</span>
+                                        <span className="bg-[#E8DDD3] text-[#5C1F1F] px-2 py-0.5">MATRICULATION</span>
+                                    </div>
+                                    <h4 className="text-base font-bold text-[#5C1F1F] mb-1">
+                                        Matriculation (10th Standard)
+                                    </h4>
+                                    <p className="text-xs text-[#5C1F1F]/80 mb-3">
+                                        Shivalik Public School
+                                    </p>
+                                    <div className="inline-block px-3 py-1 bg-[#E8DDD3] text-xs font-bold text-[#5C1F1F]">
+                                        Score: 87.2%
+                                    </div>
+                                </TiltCard>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 5: CERTIFICATES & RESUME
+            ═══════════════════════════════════════════════════════════ */}
+            <section id="certificates-resume" className="relative min-h-screen py-24 px-6 sm:px-10 lg:px-16 bg-[#5C1F1F] bg-grid-pattern">
+                <div className="max-w-[1400px] mx-auto">
+                    {/* Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-[#E8DDD3] text-[#5C1F1F] font-bold">SEC 05</span>
+                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// CREDENTIALS & CURRICULUM VITAE</span>
+                        </div>
+                        <span className="text-[#FFE29A] font-bold">[ 06 VERIFIED CERTIFICATES ]</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                        {/* ── CERTIFICATES GALLERY ── */}
+                        <div className="lg:col-span-7 bg-[#E8DDD3] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg">
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 05.0 // VERIFIED CREDENTIALS ]</span>
+                                <Award className="w-4 h-4 text-[#5C1F1F]" />
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-8 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                CERTIFI<br />CATES
+                            </h3>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {certificates.map((cert) => (
+                                    <TiltCard
+                                        key={cert.id}
+                                        maxTilt={6}
+                                        className="bg-white p-4 border-2 border-[#5C1F1F] block-shadow-sm flex flex-col justify-between hover:border-[#FFE29A]"
+                                    >
+                                        <div>
+                                            <div className="aspect-[4/3] bg-gray-100 border border-[#5C1F1F]/30 overflow-hidden mb-3 relative group">
+                                                <img
+                                                    src={cert.image}
+                                                    alt={cert.title}
+                                                    className="w-full h-full object-contain p-2"
+                                                />
+                                                <div 
+                                                    onClick={() => setSelectedCert(cert)}
+                                                    className="absolute inset-0 bg-[#2A1212]/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-mono-tech text-xs cursor-pointer"
+                                                >
+                                                    <Eye className="w-4 h-4 text-[#FFE29A]" />
+                                                    <span>PREVIEW</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="inline-block px-2 py-0.5 bg-[#5C1F1F] text-[#FFE29A] font-mono-tech text-[10px] font-bold mb-2">
+                                                {cert.badge}
+                                            </div>
+
+                                            <h4 className="font-bold text-[#5C1F1F] text-xs sm:text-sm line-clamp-2 mb-1">
+                                                {cert.title}
+                                            </h4>
+                                            <p className="text-[11px] text-[#5C1F1F]/70 font-mono-tech">
+                                                {cert.issuer} • {cert.date}
+                                            </p>
+                                        </div>
+
+                                        <a
+                                            href={cert.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-3 inline-flex items-center gap-1 text-xs font-mono-tech font-bold text-[#5C1F1F] hover:text-[#3A1010] hover:underline"
+                                        >
+                                            VERIFY CREDENTIAL <ArrowUpRight className="w-3.5 h-3.5" />
+                                        </a>
+                                    </TiltCard>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* ── RESUME HUB ── */}
+                        <div className="lg:col-span-5 bg-[#C4A5A0] text-[#3A1010] p-6 sm:p-10 border-4 border-[#2A1212] block-shadow-lg">
+                            <div className="flex items-center justify-between mb-6 border-b-2 border-[#5C1F1F]/20 pb-3 font-mono-tech text-xs text-[#5C1F1F]">
+                                <span className="font-bold">[ 05.1 // OFFICIAL RESUME ]</span>
+                                <FileText className="w-4 h-4 text-[#5C1F1F]" />
+                            </div>
+
+                            <h3
+                                className="text-4xl sm:text-6xl font-black text-[#5C1F1F] leading-none mb-8 uppercase"
+                                style={{ fontFamily: 'Playfair Display, serif' }}
+                            >
+                                RESUME
+                            </h3>
+
+                            <div className="flex flex-col items-center">
+                                <TiltCard
+                                    maxTilt={6}
+                                    className="w-full max-w-sm aspect-[4/5] bg-white border-4 border-[#5C1F1F] p-2 block-shadow-lg mb-6 overflow-hidden"
+                                >
+                                    <img
+                                        src={resumePreview}
+                                        alt="Resume Preview"
+                                        className="w-full h-full object-contain"
+                                    />
+                                </TiltCard>
+
+                                <div className="w-full space-y-3 font-mono-tech">
                                     <a
                                         href="/resume.pdf"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="bg-[#5C1F1F] text-white px-8 py-4 rounded-sm hover:bg-[#3A1010] transition-all duration-300 text-base md:text-lg font-medium shadow-xl text-center hover-lift"
+                                        className="w-full py-4 bg-[#5C1F1F] text-white font-bold text-sm tracking-wider uppercase text-center block-shadow hover:bg-[#3A1010] transition-all hover-press flex items-center justify-center gap-2"
                                     >
-                                        View Resume
+                                        <Eye className="w-4 h-4 text-[#FFE29A]" />
+                                        VIEW RESUME IN BROWSER
                                     </a>
+
                                     <a
                                         href="/resume.pdf"
                                         download
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="bg-white text-[#5C1F1F] border-2 border-[#5C1F1F] px-8 py-4 rounded-sm hover:bg-gray-100 transition-all duration-300 text-base md:text-lg font-medium shadow-xl text-center hover-lift"
+                                        className="w-full py-4 bg-white text-[#5C1F1F] border-2 border-[#5C1F1F] font-bold text-sm tracking-wider uppercase text-center block-shadow hover:bg-[#FAF7F2] transition-all hover-press flex items-center justify-center gap-2"
                                     >
-                                        Download Resume
+                                        <FileText className="w-4 h-4" />
+                                        DOWNLOAD RESUME (PDF)
                                     </a>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div id="contact" className="min-h-screen bg-[#5C1F1F] flex items-center justify-center p-6 md:p-12">
-                <div className="max-w-[800px] w-full">
-                    <h3 className="text-white font-bold mb-8 md:mb-16 text-center leading-none text-5xl md:text-[100px] hover-lift" style={{fontFamily: 'serif'}}>
-                        CONTACT
-                    </h3>
-                    <div className="bg-[#E8DDD3] p-8 md:p-12 rounded-sm shadow-2xl hover-card">
-                        <div className="bg-[#E8DDD3] p-8 md:p-12 rounded-sm shadow-2xl max-w-[700px] mx-auto">
-                            <form className="space-y-6" onSubmit={handleSubmit}>
-  <div>
-    <label className="block text-[#5C1F1F] font-medium mb-2">
-      Name
-    </label>
-    <input
-      type="text"
-      required
-      value={formData.name}
-      onChange={(e) =>
-        setFormData({ ...formData, name: e.target.value })
-      }
-      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010]"
-    />
-  </div>
-
-  <div>
-    <label className="block text-[#5C1F1F] font-medium mb-2">
-      Email
-    </label>
-    <input
-      type="email"
-      required
-      value={formData.email}
-      onChange={(e) =>
-        setFormData({ ...formData, email: e.target.value })
-      }
-      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010]"
-    />
-  </div>
-
-  <div>
-    <label className="block text-[#5C1F1F] font-medium mb-2">
-      Message
-    </label>
-    <textarea
-      required
-      rows="6"
-      value={formData.message}
-      onChange={(e) =>
-        setFormData({ ...formData, message: e.target.value })
-      }
-      className="w-full px-4 py-3 rounded-sm border-2 border-[#5C1F1F] bg-transparent focus:outline-none focus:border-[#3A1010] resize-none"
-    />
-  </div>
-
-  <button
-    type="submit"
-    className="w-full bg-[#5C1F1F] text-white px-8 py-4 rounded-sm hover:bg-[#3A1010] transition-all duration-300 text-lg font-medium"
-  >
-    Send Message
-  </button>
-</form>
-
-                        </div>
-
-                        <div className="mt-8 pt-8 border-t-2 border-[#C4A5A0]">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#5C1F1F]">
-                                <div className="hover:translate-x-2 transition-transform duration-300">
-                                    <h4 className="font-bold mb-2">Email</h4>
-                                    <a href="mailto:dhir.khushi.2005@gmail.com" className="hover:text-[#3A1010] transition-colors duration-300">dhir.khushi.2005@gmail.com</a>
-                                </div>
-                                <div className="hover:translate-x-2 transition-transform duration-300">
-                                    <h4 className="font-bold mb-2">LinkedIn</h4>
-                                    <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="hover:text-[#3A1010] transition-colors duration-300">linkedin.com/in/khushidhir3</a>
-                                </div>
-                                <div className="hover:translate-x-2 transition-transform duration-300">
-                                    <h4 className="font-bold mb-2">GitHub</h4>
-                                    <a href="https://github.com/khushidhir3" target="_blank" rel="noopener noreferrer" className="hover:text-[#3A1010] transition-colors duration-300">github.com/khushidhir3</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div className="bg-[#2A1212] text-white py-6 text-center">
-                <p className="text-sm opacity-70">© 2025 Khushi Dhir. All rights reserved.</p>
-            </div>
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 6: CONTACT & WORKING EMAILJS
+            ═══════════════════════════════════════════════════════════ */}
+            <section id="contact" className="relative min-h-screen py-24 px-6 sm:px-10 lg:px-16 bg-[#2A1212] bg-grid-pattern">
+                <div className="max-w-[1000px] mx-auto relative z-10">
+                    {/* Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-4 border-b-2 border-[#8B6B6B] font-mono-tech text-xs">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-[#FFE29A] text-[#5C1F1F] font-bold">SEC 06</span>
+                            <span className="text-[#E8DDD3] font-bold text-sm tracking-wider">// DISPATCH & COMMUNICATION</span>
+                        </div>
+                        <span className="text-[#FFE29A] font-bold">[ DIRECT LINE OPEN ]</span>
+                    </div>
 
-            <style jsx>{`
-                @keyframes fade-in {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.5s ease-out;
-                }
+                    <div className="text-center mb-12">
+                        <h2
+                            className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight"
+                            style={{ fontFamily: 'Playfair Display, serif' }}
+                        >
+                            CONTACT
+                        </h2>
+                        <p className="text-[#E8DDD3] font-mono-tech text-xs sm:text-sm tracking-widest mt-2 uppercase">
+                            Let's Build Something Exceptional Together
+                        </p>
+                    </div>
 
-                .hover-lift {
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                }
-                .hover-lift:hover {
-                    transform: translateY(-5px);
-                }
+                    <div className="bg-[#E8DDD3] text-[#3A1010] p-8 sm:p-14 border-4 border-[#5C1F1F] block-shadow-lg">
+                        <form onSubmit={handleSubmit} className="space-y-6 font-mono-tech">
+                            <div>
+                                <label className="block text-xs font-bold text-[#5C1F1F] uppercase mb-2">
+                                    [ 01 ] YOUR NAME *
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="Jane Doe"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full px-4 py-3 bg-white border-2 border-[#5C1F1F] text-[#3A1010] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5C1F1F] text-sm block-shadow-sm"
+                                />
+                            </div>
 
-                .hover-scale {
-                    transition: transform 0.4s ease, box-shadow 0.4s ease;
-                }
-                .hover-scale:hover {
-                    transform: scale(1.03);
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-                }
+                            <div>
+                                <label className="block text-xs font-bold text-[#5C1F1F] uppercase mb-2">
+                                    [ 02 ] YOUR EMAIL ADDRESS *
+                                </label>
+                                <input
+                                    type="email"
+                                    required
+                                    placeholder="jane@example.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className="w-full px-4 py-3 bg-white border-2 border-[#5C1F1F] text-[#3A1010] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5C1F1F] text-sm block-shadow-sm"
+                                />
+                            </div>
 
-                .hover-glow {
-                    transition: text-shadow 0.3s ease;
-                }
-                .hover-glow:hover {
-                    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-                }
+                            <div>
+                                <label className="block text-xs font-bold text-[#5C1F1F] uppercase mb-2">
+                                    [ 03 ] MESSAGE / INQUIRY *
+                                </label>
+                                <textarea
+                                    required
+                                    rows="5"
+                                    placeholder="Hi Khushi, I loved your projects and would like to discuss..."
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                    className="w-full px-4 py-3 bg-white border-2 border-[#5C1F1F] text-[#3A1010] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5C1F1F] text-sm block-shadow-sm resize-none"
+                                />
+                            </div>
 
-                .hover-card {
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                .hover-card:hover {
-                    transform: translateY(-8px) scale(1.02);
-                    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-                }
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full py-4 bg-[#5C1F1F] text-white font-bold text-sm tracking-wider uppercase block-shadow hover:bg-[#3A1010] transition-all hover-press flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Sparkles className="w-4 h-4 animate-spin" />
+                                        <span>TRANSMITTING MESSAGE...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send className="w-4 h-4 text-[#FFE29A]" />
+                                        <span>SEND MESSAGE NOW</span>
+                                    </>
+                                )}
+                            </button>
 
-                .hover-bg-shift {
-                    transition: background-color 0.4s ease;
-                }
-                .hover-bg-shift:hover {
-                    filter: brightness(1.05);
-                }
-            `}</style>
+                            {/* Feedback Alert */}
+                            {submitStatus === 'success' && (
+                                <div className="p-4 bg-emerald-100 border-2 border-emerald-600 text-emerald-900 text-xs font-bold flex items-center gap-2">
+                                    <Check className="w-4 h-4 text-emerald-600" />
+                                    <span>✅ Message sent successfully! Khushi will get back to you shortly.</span>
+                                </div>
+                            )}
+
+                            {submitStatus === 'error' && (
+                                <div className="p-4 bg-rose-100 border-2 border-rose-600 text-rose-900 text-xs font-bold">
+                                    ❌ Failed to send message. Please email directly at dhir.khushi.2005@gmail.com.
+                                </div>
+                            )}
+                        </form>
+
+                        {/* Direct Contacts Grid */}
+                        <div className="mt-10 pt-8 border-t-2 border-[#5C1F1F]/20 grid grid-cols-1 md:grid-cols-3 gap-4 font-mono-tech text-xs">
+                            <div
+                                onClick={copyEmailToClipboard}
+                                className="p-4 bg-white border-2 border-[#5C1F1F] block-shadow-sm cursor-pointer hover:bg-[#FAF7F2] transition-colors"
+                            >
+                                <div className="text-[#5C1F1F] font-bold mb-1 flex items-center gap-1.5">
+                                    <Mail className="w-3.5 h-3.5" />
+                                    <span>EMAIL (CLICK TO COPY)</span>
+                                </div>
+                                <div className="text-xs text-[#3A1010] truncate">dhir.khushi.2005@gmail.com</div>
+                            </div>
+
+                            <a
+                                href="https://www.linkedin.com/in/khushidhir3/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-4 bg-white border-2 border-[#5C1F1F] block-shadow-sm hover:bg-[#FAF7F2] transition-colors block"
+                            >
+                                <div className="text-[#5C1F1F] font-bold mb-1 flex items-center gap-1.5">
+                                    <Linkedin className="w-3.5 h-3.5" />
+                                    <span>LINKEDIN</span>
+                                </div>
+                                <div className="text-xs text-[#3A1010] truncate">linkedin.com/in/khushidhir3</div>
+                            </a>
+
+                            <a
+                                href="https://github.com/khushidhir3"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-4 bg-white border-2 border-[#5C1F1F] block-shadow-sm hover:bg-[#FAF7F2] transition-colors block"
+                            >
+                                <div className="text-[#5C1F1F] font-bold mb-1 flex items-center gap-1.5">
+                                    <Github className="w-3.5 h-3.5" />
+                                    <span>GITHUB</span>
+                                </div>
+                                <div className="text-xs text-[#3A1010] truncate">github.com/khushidhir3</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                BLOCKY LUXE FOOTER
+            ═══════════════════════════════════════════════════════════ */}
+            <footer className="bg-[#1A0A0A] border-t-2 border-[#8B6B6B] text-[#E8DDD3] py-8 px-6 sm:px-10 font-mono-tech text-xs">
+                <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span className="text-[#FFE29A] font-bold">KHUSHI DHIR</span>
+                        <span className="text-[#C4A5A0] mx-2">•</span>
+                        <span>© 2025 ALL RIGHTS RESERVED</span>
+                    </div>
+
+                    <div className="text-[#C4A5A0] text-center">
+                        ENGINEERED WITH REACT, TAILWIND & IMMENSE PASSION ✦
+                    </div>
+
+                    <a
+                        href="#hero"
+                        className="px-3 py-1.5 bg-[#3A1010] border border-[#8B6B6B] text-[#FFE29A] hover:bg-[#5C1F1F] transition-all block-shadow-sm"
+                    >
+                        BACK TO TOP ↑
+                    </a>
+                </div>
+            </footer>
+
+            {/* ═══════════════════════════════════════════════════════════
+                CERTIFICATE LIGHTBOX MODAL
+            ═══════════════════════════════════════════════════════════ */}
+            {selectedCert && (
+                <div
+                    onClick={() => setSelectedCert(null)}
+                    className="fixed inset-0 z-50 bg-[#1A0A0A]/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in"
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-[#E8DDD3] text-[#3A1010] border-4 border-[#5C1F1F] max-w-2xl w-full p-6 block-shadow-lg relative animate-fade-in"
+                    >
+                        <button
+                            onClick={() => setSelectedCert(null)}
+                            className="absolute top-4 right-4 p-2 bg-[#5C1F1F] text-white hover:bg-[#3A1010] transition-colors block-shadow-sm cursor-pointer"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="mb-4">
+                            <span className="px-2.5 py-1 bg-[#5C1F1F] text-[#FFE29A] font-mono-tech text-xs font-bold">
+                                {selectedCert.badge}
+                            </span>
+                            <h3 className="text-xl sm:text-2xl font-black text-[#5C1F1F] mt-2" style={{ fontFamily: 'Playfair Display, serif' }}>
+                                {selectedCert.title}
+                            </h3>
+                            <p className="text-xs font-mono-tech text-[#5C1F1F]/70">
+                                Issuer: {selectedCert.issuer} • Issued: {selectedCert.date}
+                            </p>
+                        </div>
+
+                        <div className="aspect-[4/3] bg-white border-2 border-[#5C1F1F] overflow-hidden mb-6 flex items-center justify-center p-2">
+                            <img src={selectedCert.image} alt={selectedCert.title} className="w-full h-full object-contain" />
+                        </div>
+
+                        <div className="flex gap-3 font-mono-tech text-xs">
+                            <a
+                                href={selectedCert.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 py-3 bg-[#5C1F1F] text-white font-bold text-center block-shadow hover:bg-[#3A1010] transition-all flex items-center justify-center gap-2"
+                            >
+                                <ExternalLink className="w-4 h-4 text-[#FFE29A]" />
+                                VERIFY CREDENTIAL
+                            </a>
+                            <button
+                                onClick={() => setSelectedCert(null)}
+                                className="px-6 py-3 bg-white text-[#5C1F1F] border-2 border-[#5C1F1F] font-bold block-shadow hover:bg-[#FAF7F2] transition-all cursor-pointer"
+                            >
+                                CLOSE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+
 export default Portfolio;
