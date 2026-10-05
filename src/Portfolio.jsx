@@ -221,26 +221,26 @@ const Portfolio = () => {
     return (
         <div className="bg-[#A67B7B]">
             <Analytics />
-            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden">
-                <div className="max-w-[1400px] w-full mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-16">
+            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden py-12 px-6 sm:px-10 md:px-16 lg:px-24">
+                <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16">
                     <div className="flex-1 text-center md:text-left">
-                        <h1 className="text-white text-[60px] sm:text-[80px] md:text-[100px] lg:text-[140px] font-bold leading-none tracking-wider mb-6 md:mb-12 hover-lift" style={{fontFamily: 'serif', fontWeight: '900'}}>
+                        <h1 className="text-white text-[54px] sm:text-[72px] md:text-[88px] lg:text-[120px] font-bold leading-none tracking-wider mb-6 md:mb-10 hover-lift" style={{fontFamily: 'serif', fontWeight: '900'}}>
                             PORTFOLIO
                         </h1>
-                        <div className="space-y-2 md:space-y-4">
-                            <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-widest hover-glow">KHUSHI</h2>
-                            <h2 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-widest hover-glow">DHIR </h2>
+                        <div className="space-y-2 md:space-y-3">
+                            <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-widest hover-glow">KHUSHI</h2>
+                            <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-widest hover-glow">DHIR</h2>
                         </div>
-                        <div className="text-white text-sm md:text-base font-light mt-6 md:mt-12 space-y-1">
-                            <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="block text-lg hover:text-[#C4A5A0] transition-all duration-300 hover:translate-x-2">LinkedIn: khushidhir3</a>
-                            <a href="https://github.com/khushidhir3" target="_blank" rel="noopener noreferrer" className="block hover:text-[#C4A5A0] text-lg transition-all duration-300 hover:translate-x-2">GitHub: khushidhir3</a>
-                            <a href="mailto:dhir.khushi.2005@gmail.com" className="block hover:text-[#C4A5A0] transition-all duration-300 text-lg hover:translate-x-2">Email: dhir.khushi.2005@gmail.com</a>
+                        <div className="text-white text-sm md:text-base font-light mt-6 md:mt-10 space-y-1.5">
+                            <a href="https://www.linkedin.com/in/khushidhir3/" target="_blank" rel="noopener noreferrer" className="block text-base md:text-lg hover:text-[#C4A5A0] transition-all duration-300 hover:translate-x-2">LinkedIn: khushidhir3</a>
+                            <a href="https://github.com/khushidhir3" target="_blank" rel="noopener noreferrer" className="block hover:text-[#C4A5A0] text-base md:text-lg transition-all duration-300 hover:translate-x-2">GitHub: khushidhir3</a>
+                            <a href="mailto:dhir.khushi.2005@gmail.com" className="block hover:text-[#C4A5A0] transition-all duration-300 text-base md:text-lg hover:translate-x-2">Email: dhir.khushi.2005@gmail.com</a>
                         </div>
                     </div>
 
-                    <div className="flex-shrink-0">
-                        <div className="w-[280px] h-[350px] sm:w-[350px] sm:h-[450px] md:w-[400px] md:h-[500px] lg:w-[500px] lg:h-[600px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm relative overflow-hidden shadow-2xl flex items-center justify-center hover-scale">
-                            <img src={profile} alt="Profile" className="w-full h-full object-cover" />
+                    <div className="flex-shrink-0 md:mr-4 lg:mr-8">
+                        <div className="w-[250px] h-[300px] sm:w-[290px] sm:h-[350px] md:w-[330px] md:h-[390px] lg:w-[360px] lg:h-[420px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm relative overflow-hidden shadow-2xl flex items-center justify-center hover-scale">
+                            <img src={profile} alt="Profile" className="w-full h-full object-cover object-top" />
                         </div>
                     </div>
                 </div>
