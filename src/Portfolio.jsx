@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import profile from './assets/formal.jpeg';
-import about from './assets/formal.jpeg';
+import profile from './assets/profile.png';
+import about from './assets/about.png';
 import resumePreview from './assets/resumePreview.png';
 import portfolio from './assets/portfolio.png';
 import MAD from './assets/MAD.jpg'
@@ -14,6 +14,7 @@ import Notesheet from './assets/Notesheet.png';
 import Mindhorizon from './assets/MindHorizon.png';
 import Whiskarts from './assets/Whiskarts.png';
 import Lifestream from './assets/Lifestream.png';
+import schneiderlink from './assets/schneiderlink.png';
 const Portfolio = () => {
     const [expandedSection, setExpandedSection] = useState(null);
     const [expandedProject, setExpandedProject] = useState(null);
@@ -56,6 +57,42 @@ const Portfolio = () => {
     };
 
     const projects = [
+        {
+            id: 'schneiderlink',
+            name: 'SCHNEIDLINK',
+            image: schneiderlink,
+            subtitle: 'Field Service Dispatch & Tracking System',
+            description:
+                'A comprehensive Uber-like platform for field service management and real-time coordination. Enables seamless job dispatching, live technician assignment, and role-based communication across admins, clients, and technicians.',
+            features: [
+                'Interactive role-based dashboards (Admin, Client, Technician) with live state synchronization',
+                'Client-side WebSocket listeners (Laravel Echo) for live UI updates and instant push notifications on dispatch alerts',
+                'Real-time job dispatching and intelligent technician matching',
+                'Optimized frontend performance using Vite asset bundling and prefetching for fast load times',
+                'Streamlined workflow coordination and status tracking'
+            ],
+            tech: ['React', 'Inertia.js', 'Laravel Echo', 'WebSockets', 'JavaScript (ES6+)', 'Tailwind CSS', 'Vite'],
+            github: 'https://github.com/khushidhir3',
+            demo: '#'
+        },
+        {
+            id: 'lifestream',
+            name: 'LIFESTREAM',
+            image: Lifestream,
+            subtitle: 'Blood Donation Platform',
+            description:
+                'A full-stack blood donation platform enabling users to register as donors, locate them through client-side search and filtering, and connect with those in need via connection workflows and alerts.',
+            features: [
+                'Engineered user and admin dashboards with role-based access control to manage donor records',
+                'Client-side search, filtering, and donor registration workflows',
+                'Integrated geolocation and automated alerts to connect urgent requests with nearby donors',
+                'Secure access to donor requests backed by Node.js, Prisma, and SQLite/MongoDB stack',
+                'Responsive design optimized for emergency situations'
+            ],
+            tech: ['React', 'Vite', 'Node.js', 'Prisma', 'SQLite', 'Tailwind CSS', 'REST APIs'],
+            github: 'https://github.com/khushidhir3/LifeStream',
+            demo: '#'
+        },
         {
             id: 'notesheet',
             name: 'NOTESHEET TRACKER',
@@ -108,24 +145,6 @@ const Portfolio = () => {
             ],
             tech: ['React', 'JavaScript', 'CSS', 'Node.js'],
             github: 'https://github.com/khushidhir3/Whiskarts',
-            demo: '#'
-        },
-        {
-            id: 'lifestream',
-            name: 'LIFESTREAM',
-            image: Lifestream,
-            subtitle: 'Blood Donation & Health Awareness',
-            description:
-                'A purpose-driven platform aimed at connecting blood donors with recipients while promoting health awareness and emergency readiness.',
-            features: [
-                'Donor and recipient information management',
-                'User-friendly interface for quick access',
-                'Focus on real-time availability and outreach',
-                'Designed for emergency use cases',
-                'Scalable foundation for future enhancements'
-            ],
-            tech: ['React', 'JavaScript', 'CSS', 'Node.js','MongoDB'],
-            github: 'https://github.com/khushidhir3/LifeStream',
             demo: '#'
         },
         {
@@ -268,7 +287,7 @@ const Portfolio = () => {
                                     {expandedSection === 'about' && (
                                         <div className="mt-4 md:mt-8 text-[#5C1F1F] text-base md:text-lg leading-relaxed space-y-3 md:space-y-4 animate-fade-in">
                                             <p>
-                                                Currently pursuing B.Tech in Computer Science at Lovely Professional University with a CGPA of 7.48.
+                                                Currently pursuing B.Tech in Computer Science at Lovely Professional University with a CGPA of 7.84.
                                             </p>
                                             <p>
                                                 Completed specialized training in Mobile Application Development using Flutter and have hands-on experience building real-world applications.
@@ -310,48 +329,41 @@ const Portfolio = () => {
                                 <div>
                                     <p className={`text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>LANGUAGES</p>
                                     <ul className={`text-[#5C1F1F] space-y-2 mt-4 font-medium transition-all duration-500 ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">C++</li>
                                         <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Java</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">C++</li>
                                         <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">JavaScript</li>
                                         <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">SQL</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Dart</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">C / Dart</li>
                                     </ul>
                                 </div>
                                 <div>
-                                    <p className={`text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>FRONTEND</p>
+                                    <p className={`text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block transition-all duration-500 hover-lift ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>FRAMEWORKS</p>
                                     <ul className={`text-[#5C1F1F] space-y-2 mt-4 font-medium transition-all duration-500 ${expandedSection === 'skills' ? 'text-sm md:text-base' : 'text-xs'}`}>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">HTML & CSS</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">React.js</li>
-                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Bootstrap</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">React.js / Next.js</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">SpringBoot</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Node.js</li>
+                                        <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Tailwind CSS</li>
                                         <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Flutter</li>
                                     </ul>
                                 </div>
                                 {expandedSection === 'skills' && (
                                     <>
                                         <div className="animate-fade-in">
-                                            <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">BACKEND</p>
-                                            <ul className="text-[#5C1F1F] space-y-2 mt-4 font-medium text-sm md:text-base">
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Node.js</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">REST API</li>
-                                            </ul>
-                                        </div>
-                                        <div className="animate-fade-in">
                                             <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">DATABASES</p>
                                             <ul className="text-[#5C1F1F] space-y-2 mt-4 font-medium text-sm md:text-base">
                                                 <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">PostgreSQL</li>
                                                 <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">MongoDB</li>
                                                 <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Firebase</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Supabase</li>
+                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">MySQL / Supabase</li>
                                             </ul>
                                         </div>
                                         <div className="animate-fade-in">
-                                            <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">TOOLS</p>
+                                            <p className="text-white font-bold mb-4 bg-[#5C1F1F] px-4 py-2 rounded-sm inline-block text-sm md:text-base hover-lift">TOOLS & PLATFORMS</p>
                                             <ul className="text-[#5C1F1F] space-y-2 mt-4 font-medium text-sm md:text-base">
+                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Postman / Prisma</li>
+                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Git & GitHub</li>
+                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">IntelliJ / VSCode</li>
                                                 <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Figma</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">VSCode</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Git</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">GitHub</li>
-                                                <li className="border-b border-[#5C1F1F] pb-1 hover:translate-x-2 transition-transform duration-300">Android Emulator</li>
                                             </ul>
                                         </div>
                                     </>
@@ -500,20 +512,20 @@ const Portfolio = () => {
                                         <strong>B.Tech - Computer Science</strong><br/>
                                         Lovely Professional University
                                     </p>
-                                    <p className="text-sm opacity-80">CGPA: 7.48</p>
+                                    <p className="text-sm opacity-80">CGPA: 7.84</p>
                                 </div>
                                 {expandedSection === 'education' && (
                                     <>
                                         <div className="bg-white text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-2xl animate-fade-in hover-card">
-                                            <p className="text-sm mb-4 opacity-70">2021 - 2023</p>
+                                            <p className="text-sm mb-4 opacity-70">2022 - 2023</p>
                                             <p className="text-base md:text-lg mb-2">
-                                                <strong>Senior Secondary</strong><br/>
+                                                <strong>Senior Secondary (Intermediate)</strong><br/>
                                                 Shivalik Public School
                                             </p>
                                             <p className="text-sm opacity-80">73.2%</p>
                                         </div>
                                         <div className="bg-white text-[#5C1F1F] p-6 md:p-8 rounded-sm hover:scale-105 transition-transform shadow-2xl animate-fade-in hover-card">
-                                            <p className="text-sm mb-4 opacity-70">2019 - 2021</p>
+                                            <p className="text-sm mb-4 opacity-70">2020 - 2021</p>
                                             <p className="text-base md:text-lg mb-2">
                                                 <strong>Matriculation</strong><br/>
                                                 Shivalik Public School
