@@ -221,10 +221,10 @@ const Portfolio = () => {
     return (
         <div className="bg-[#A67B7B]">
             <Analytics />
-            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden py-12 px-6 sm:px-10 md:px-16 lg:px-24">
-                <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16">
+            <div className="min-h-screen bg-[#5C1F1F] flex items-center justify-center relative overflow-hidden py-16 px-6 sm:px-10 md:px-14 lg:px-20">
+                <div className="max-w-[1240px] w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 lg:gap-16">
                     <div className="flex-1 text-center md:text-left">
-                        <h1 className="text-white text-[54px] sm:text-[72px] md:text-[88px] lg:text-[120px] font-bold leading-none tracking-wider mb-6 md:mb-10 hover-lift" style={{fontFamily: 'serif', fontWeight: '900'}}>
+                        <h1 className="text-white text-[52px] sm:text-[70px] md:text-[86px] lg:text-[118px] font-bold leading-none tracking-wider mb-6 md:mb-10 hover-lift" style={{fontFamily: 'serif', fontWeight: '900'}}>
                             PORTFOLIO
                         </h1>
                         <div className="space-y-2 md:space-y-3">
@@ -238,9 +238,9 @@ const Portfolio = () => {
                         </div>
                     </div>
 
-                    <div className="flex-shrink-0 md:mr-4 lg:mr-8">
-                        <div className="w-[250px] h-[300px] sm:w-[290px] sm:h-[350px] md:w-[330px] md:h-[390px] lg:w-[360px] lg:h-[420px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm relative overflow-hidden shadow-2xl flex items-center justify-center hover-scale">
-                            <img src={profile} alt="Profile" className="w-full h-full object-cover object-top" />
+                    <div className="flex-shrink-0 md:mr-2 lg:mr-6">
+                        <div className="w-[270px] h-[410px] sm:w-[310px] sm:h-[460px] md:w-[340px] md:h-[500px] lg:w-[380px] lg:h-[540px] bg-gradient-to-br from-[#8B6B6B] to-[#6B4F4F] rounded-sm relative overflow-hidden shadow-2xl flex items-center justify-center hover-scale">
+                            <img src={profile} alt="Profile" className="w-full h-full object-cover object-[center_30%]" />
                         </div>
                     </div>
                 </div>
